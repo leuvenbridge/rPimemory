@@ -191,12 +191,6 @@ else:
     rootPath = "/Users/baptiste/Documents/python/rPi"
 
 
-# open socket
-sock,conn = serverConnect()
-print(sock)
-print(conn)
-
-
 # start pygame
 pygame.init()
 win = pygame.display.set_mode((screenWidth,screenHeight), pygame.FULLSCREEN, 32)
@@ -351,12 +345,19 @@ currDate = time.localtime(time.time())
 clutPath = rootPath + "/clut.txt"
 dataPath = rootPath + "/data/monkey"+str(monkey+1)+ "_task"+str(task+1)+ "_{year}-{month}-{day}_{hours}-{minutes}-{seconds}.dat".format(year=currDate[0],month=currDate[1],day=currDate[2],hours=currDate[3],minutes=currDate[4],seconds=currDate[5])
 logPath = rootPath + "/data/monkey"+str(monkey+1)+"_task"+str(task+1)+"_{year}-{month}-{day}_{hours}-{minutes}-{seconds}.log".format(year=currDate[0],month=currDate[1],day=currDate[2],hours=currDate[3],minutes=currDate[4],seconds=currDate[5])
+pingPath = rootPath + "/data/monkey"+str(monkey+1)+"_task"+str(task+1)+"_{year}-{month}-{day}_{hours}-{minutes}-{seconds}.synch".format(year=currDate[0],month=currDate[1],day=currDate[2],hours=currDate[3],minutes=currDate[4],seconds=currDate[5])
 fidData = open(dataPath,"w")
 fidLog = open(logPath,"w")
+fidSynch = open(logPath,"w")
 dataStr = "time,lambda,tau,pup,pdown,avail,click,timeout"
 fidData.write(dataStr)
 logStr = "time,type,value"
 fidLog.write(logStr)
+synchStr = "client1,server,client2"
+fidSynch.write(synchStr)
+
+# open socket
+sock = serverConnect()
 
 
 # start main loop
@@ -463,8 +464,11 @@ while True:
 
     # ping server
     if (time.time()-lastPing)>pingInterval:
-        tList = pingServer(sock,conn)
+        tList = pingServer(sock)
         lastPing = time.time()
+        synchStr = "\n{client1},{server},{client2}".format(client1=tList[0],server=tList[2],client2=tList[1])
+        fidSynch.write(synchStr)
+
 
     # quit if key press, button press or reward max
     keys = pygame.key.get_pressed()

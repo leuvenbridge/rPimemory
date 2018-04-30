@@ -7,8 +7,14 @@ def serverConnect():
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     host = '192.168.0.10'
     port = 12345
+<<<<<<< HEAD
     sock.connect((host,port))
     return sock
+=======
+    conn = sock.connect((host,port))
+    print('Connection received from {}'.format(host))
+    return sock,conn
+>>>>>>> 5eef2612747fe13989675aebd5aa4284cce972e7
 
 def pingServer(sock):
     tList = []
