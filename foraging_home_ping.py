@@ -8,7 +8,7 @@ def serverConnect():
     host = '192.168.0.10'
     port = 12345
     conn = sock.connect((host,port))
-    print('Connection received')
+    print('Connection received from {}'.format(host))
     return sock,conn
 
 def pingServer(sock,conn):
