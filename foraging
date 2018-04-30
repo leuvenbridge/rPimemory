@@ -1,7 +1,7 @@
 [Desktop Entry]
 Version=1.0
 Name=foraging
-Exec=python3 /home/pi/Documents/git/rPi/foraging_home_v13.py
+Exec=python3 /home/pi/Documents/git/rPi/foraging_home_v14.py
 Terminal=false
 Icon=/home/pi/Documents/git/rPi/monkey.png
 Type=Application

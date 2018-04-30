@@ -7,22 +7,21 @@ def serverConnect():
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     host = '192.168.0.10'
     port = 12345
-    conn = sock.connect((host,port))
-    print('Connection received')
-    return sock,conn
+    sock.connect((host,port))
+    return sock
 
-def pingServer(sock,conn):
+def pingServer(sock):
     tList = []
     tList.append(time.time())
-    conn.send('0'.encode())
-    msg = conn.recv(1)
+    sock.send('0'.encode())
+    msg = sock.recv(1)
     tList.append(time.time())
-    conn.send('1'.encode())
-    msg = conn.recv(1024)
-    tList.append(int(msg))
+    sock.send('1'.encode())
+    msg = sock.recv(1024)
+    tList.append(int(msg.decode())/1000000)
     return tList
 
-def closeConnection(sock,conn):
-    conn.close()
+def closeConnection(sock):
+    sock.send('2'.encode())
     sock.close()
     print('Connection closed')
