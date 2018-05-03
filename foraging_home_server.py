@@ -17,7 +17,7 @@ print('Connection received from {}'.format(addr))
 
 while True:
     msg = conn.recv(1)
-    if msg.decode()
+    if msg.decode():
         if (int(msg.decode())==0):
             timeReceived = time.time()
             conn.send('1'.encode())
