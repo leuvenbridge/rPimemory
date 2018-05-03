@@ -17,13 +17,14 @@ print('Connection received from {}'.format(addr))
 
 while True:
     msg = conn.recv(1)
-    if (int(msg.decode())==0):
-        timeReceived = time.time()
-        conn.send('1'.encode())
-    elif (int(msg.decode())==1):
-        time_str = '{}'.format(int(1000000*timeReceived))
-        conn.send(time_str.encode())
-    elif (int(msg.decode())==2):
+    if msg.decode()
+        if (int(msg.decode())==0):
+            timeReceived = time.time()
+            conn.send('1'.encode())
+        elif (int(msg.decode())==1):
+            time_str = '{}'.format(int(1000000*timeReceived))
+            conn.send(time_str.encode())
+    else:
         break
 
 conn.close()
