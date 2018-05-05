@@ -9,6 +9,7 @@ sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 host = '192.168.0.10'
 port = 12345
 sock.bind((host,port))
+print('Server started')
 
 sock.listen(5)
 
