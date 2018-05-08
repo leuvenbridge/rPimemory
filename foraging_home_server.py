@@ -11,6 +11,7 @@ port = 12345
 sock.bind((host,port))
 print('Server started')
 
+
 sock.listen(5)
 
 conn, addr = sock.accept()
