@@ -3,7 +3,6 @@
 # load libraries
 import os, sys, time, math, random, pygame, numpy, imageio
 from pygame.locals import *
-##from foraging_home_ping import *
 
 try:
     rPi = 1
@@ -86,7 +85,7 @@ def quitprogram(circ):
 
 
 if rPi:
-    rootPath = "/home/pi/Documents/git/rPi"
+    rootPath = "/home/pi/Documents/git/rPimemory"
 
     # rotate motor
     def motor_rotate(step):
@@ -180,7 +179,7 @@ if rPi:
     ts = ft5406.Touchscreen()
 
 else:
-    rootPath = "/Users/baptiste/Documents/python/rPi"
+    rootPath = "/Users/baptiste/Documents/python/rPimemory"
 
 
 # start pygame
@@ -196,22 +195,6 @@ winSize = (screenWidth,screenHeight)
 winCenter = (int(screenWidth/2),int(screenHeight/2))
 
 # # makes sounds
-# sndBufferSize = int(sndSampFreq*sndDur)
-# sndFadeSize = int(sndSampFreq*sndFadeDur)
-# sndPlateauSize = int(sndBufferSize-2*sndFadeSize)
-#
-# fadeIn = numpy.expand_dims(numpy.sin(numpy.linspace(0,numpy.pi/2,sndFadeSize))**2,1)
-# fadeOut = numpy.expand_dims(numpy.sin(numpy.linspace(numpy.pi/2,0,sndFadeSize))**2,1)
-# plateau = numpy.ones((sndPlateauSize,1))
-# window = numpy.vstack((fadeIn,plateau,fadeOut))
-# sine1 = numpy.expand_dims(numpy.sin(numpy.linspace(0,2*numpy.pi*sndFreq1*sndDur,sndBufferSize)),1)
-# sine2 = numpy.expand_dims(numpy.sin(numpy.linspace(0,2*numpy.pi*sndFreq2*sndDur,sndBufferSize)),1)
-# sndVec1 = 32768*sine1*window
-# sndVec2 = 32768*sine2*window
-#
-# pygame.mixer.init(frequency=sndSampFreq, size=-16, channels=1, buffer=sndBufferSize)
-# snd1 = pygame.mixer.Sound(sndVec1.astype('int16'))
-# snd2 = pygame.mixer.Sound(sndVec2.astype('int16'))
 
 # select animal
 monkeyList = ('Ody','Kraut','Hansel','Lysander','Achilles','Schodinger','Quigley','Test')
@@ -255,7 +238,6 @@ while monkey<0:
 win.fill((128,128,128))
 pygame.display.flip()
 time.sleep(0.25)
-
 
 # select task, 1=always on, 2=alternate on/off
 textList = ('Training 1', 'Training 2', 'Training 3','Training 4')
@@ -303,9 +285,9 @@ time.sleep(0.25)
 # create and load files
 currDate = time.localtime(time.time())
 clutPath = rootPath + "/clut.txt"
-dataPath = rootPath + "/data/"+monkeyList(monkey+1)+ "_task"+str(task+1)+ "_{year}-{month}-{day}_{hours}-{minutes}-{seconds}.dat".format(year=currDate[0],month=currDate[1],day=currDate[2],hours=currDate[3],minutes=currDate[4],seconds=currDate[5])
-logPath = rootPath + "/data/"+monkeyList(monkey+1)+"_task"+str(task+1)+"_{year}-{month}-{day}_{hours}-{minutes}-{seconds}.log".format(year=currDate[0],month=currDate[1],day=currDate[2],hours=currDate[3],minutes=currDate[4],seconds=currDate[5])
-pingPath = rootPath + "/data/"+monkeyList(monkey+1)+"_task"+str(task+1)+"_{year}-{month}-{day}_{hours}-{minutes}-{seconds}.synch".format(year=currDate[0],month=currDate[1],day=currDate[2],hours=currDate[3],minutes=currDate[4],seconds=currDate[5])
+dataPath = rootPath + "/data/" + monkeyList[monkey+1]+ "_task"+str(task+1)+ "_{year}-{month}-{day}_{hours}-{minutes}-{seconds}.dat".format(year=currDate[0],month=currDate[1],day=currDate[2],hours=currDate[3],minutes=currDate[4],seconds=currDate[5])
+logPath = rootPath + "/data/" + monkeyList[monkey+1]+"_task"+str(task+1)+"_{year}-{month}-{day}_{hours}-{minutes}-{seconds}.log".format(year=currDate[0],month=currDate[1],day=currDate[2],hours=currDate[3],minutes=currDate[4],seconds=currDate[5])
+pingPath = rootPath + "/data/" + monkeyList[monkey+1]+"_task"+str(task+1)+"_{year}-{month}-{day}_{hours}-{minutes}-{seconds}.synch".format(year=currDate[0],month=currDate[1],day=currDate[2],hours=currDate[3],minutes=currDate[4],seconds=currDate[5])
 fidData = open(dataPath,"w")
 fidLog = open(logPath,"w")
 fidSynch = open(logPath,"w")
@@ -316,9 +298,6 @@ logStr = "time,type,value"
 fidLog.write(logStr)
 synchStr = "client1,server,client2"
 fidSynch.write(synchStr)
-
-### open socket
-##sock = serverConnect()
 
 # start main loop
 startTime = time.time()
@@ -384,7 +363,7 @@ while True:
         offsetRect = (int((screenWidth-newRect[2])/2),int((screenHeight-newRect[3])/2))
 
 ##    # write in data files
-    dataStr = "\n{time},{stim},{click:b},{out:b}".format(time=time.time()-startTime,click=wasClicked,out=(time.time()-lastTimeOut)<timeOut)
+    dataStr = "\n{time},{stim},{click:b},{out:b}".format(time=time.time()-startTime,stim=stimNumber,click=wasClicked,out=(time.time()-lastTimeOut)<timeOut)
     fidData.write(dataStr)
 
     # display frame
