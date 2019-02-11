@@ -5,7 +5,7 @@ import socket, time
 def serverConnect():
     sock = socket.socket()
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    host = '192.168.0.10'
+    host = '192.168.0.106'
     port = 12345
     return sock
 

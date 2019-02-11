@@ -30,8 +30,7 @@ refreshRate = 60
 rewardsMax = 200
 timeMax = 1
 timeOut = 1
-stimScale = 2
-
+stimScale = 3
 
 # feedback params
 sndFreq1 = 1000
@@ -57,7 +56,6 @@ pinLedO = 23
 
 # system param
 pingInterval = 10
-
 
 # define functions
 def quitprogram(circ):
@@ -197,7 +195,6 @@ if rPi:
 winSize = (screenWidth,screenHeight)
 winCenter = (int(screenWidth/2),int(screenHeight/2))
 
-
 # # makes sounds
 # sndBufferSize = int(sndSampFreq*sndDur)
 # sndFadeSize = int(sndSampFreq*sndFadeDur)
@@ -215,7 +212,6 @@ winCenter = (int(screenWidth/2),int(screenHeight/2))
 # pygame.mixer.init(frequency=sndSampFreq, size=-16, channels=1, buffer=sndBufferSize)
 # snd1 = pygame.mixer.Sound(sndVec1.astype('int16'))
 # snd2 = pygame.mixer.Sound(sndVec2.astype('int16'))
-
 
 # select animal
 monkeyList = ('Ody','Kraut','Hansel','Lysander','Achilles','Schodinger','Quigley','Test')
@@ -302,29 +298,19 @@ while task<0:
 
 win.fill((128,128,128))
 pygame.display.flip()
-time.sleep(0.25)
-
-
-### process params
-##if (task==0):
-##    
-##elif (task==1):
-##    
-##elif (task==2):
-##    
-##elif (task==3):
-    
+time.sleep(0.25)   
 
 # create and load files
 currDate = time.localtime(time.time())
 clutPath = rootPath + "/clut.txt"
-dataPath = rootPath + "/data/monkey"+str(monkey+1)+ "_task"+str(task+1)+ "_{year}-{month}-{day}_{hours}-{minutes}-{seconds}.dat".format(year=currDate[0],month=currDate[1],day=currDate[2],hours=currDate[3],minutes=currDate[4],seconds=currDate[5])
-logPath = rootPath + "/data/monkey"+str(monkey+1)+"_task"+str(task+1)+"_{year}-{month}-{day}_{hours}-{minutes}-{seconds}.log".format(year=currDate[0],month=currDate[1],day=currDate[2],hours=currDate[3],minutes=currDate[4],seconds=currDate[5])
-pingPath = rootPath + "/data/monkey"+str(monkey+1)+"_task"+str(task+1)+"_{year}-{month}-{day}_{hours}-{minutes}-{seconds}.synch".format(year=currDate[0],month=currDate[1],day=currDate[2],hours=currDate[3],minutes=currDate[4],seconds=currDate[5])
+dataPath = rootPath + "/data/"+monkeyList(monkey+1)+ "_task"+str(task+1)+ "_{year}-{month}-{day}_{hours}-{minutes}-{seconds}.dat".format(year=currDate[0],month=currDate[1],day=currDate[2],hours=currDate[3],minutes=currDate[4],seconds=currDate[5])
+logPath = rootPath + "/data/"+monkeyList(monkey+1)+"_task"+str(task+1)+"_{year}-{month}-{day}_{hours}-{minutes}-{seconds}.log".format(year=currDate[0],month=currDate[1],day=currDate[2],hours=currDate[3],minutes=currDate[4],seconds=currDate[5])
+pingPath = rootPath + "/data/"+monkeyList(monkey+1)+"_task"+str(task+1)+"_{year}-{month}-{day}_{hours}-{minutes}-{seconds}.synch".format(year=currDate[0],month=currDate[1],day=currDate[2],hours=currDate[3],minutes=currDate[4],seconds=currDate[5])
 fidData = open(dataPath,"w")
 fidLog = open(logPath,"w")
 fidSynch = open(logPath,"w")
-dataStr = "time,lambda,tau,pup,pdown,avail,click,timeout"
+##dataStr = "time,lambda,tau,pup,pdown,avail,click,timeout"
+dataStr = "time,"
 fidData.write(dataStr)
 logStr = "time,type,value"
 fidLog.write(logStr)
@@ -334,12 +320,10 @@ fidSynch.write(synchStr)
 ### open socket
 ##sock = serverConnect()
 
-
 # start main loop
 startTime = time.time()
 
 pygame.event.clear()
-
 
 target = 1
 newStim = 0
@@ -351,6 +335,10 @@ lastPing = -time.time()
 giveReward = 0
 I = numpy.zeros((screenWidth,screenHeight,3))
 
+wasClicked = 0
+displayStim = [1,2,3,4,5]
+rewardStim  = [1]
+
 while True:
 
     pygame.event.pump()
@@ -360,15 +348,20 @@ while True:
         if not wasClicked:
 ##            logStr = "\n{time},1,{avail}".format(time=time.time()-startTime,avail=avail)
 ##            fidLog.write(logStr)
-            if target:
+            if stimNumber in rewardStim:
                 lastSwitch = time.time()
                 rewardsNum = rewardsNum+1
                 if rPi:
-                    motorCurrStep = drop_pellet(motorCurrStep)
+                    a = 1
+                    #motorCurrStep = drop_pellet(motorCurrStep)
+                # add sound
                 # snd1.play(loops=0)
+                newStim = 1
             else:
                 lastTimeOut = time.time()
-                # snd2.play(loops=0)
+                # ToDo: display black screen for n seconds
+                # add sound
+                
         wasClicked = 1
     else:
         wasClicked = 0
@@ -381,9 +374,8 @@ while True:
         newstim = 1
         
     if newStim:
-        target = int(numpy.ceil(numpy.random.rand()-0.5))
         newStim = 0
-        stimNumber = int(numpy.ceil(numpy.random.rand()*1000))
+        stimNumber = random.choice(displayStim)
         stimName = '{stimFolder:s}/{stimNumber:d}/{stimNumber:d}_r0.png'.format(stimFolder=imagesFolder,stimNumber=stimNumber)
         I = pygame.image.load(stimName)
         oldRect = I.get_rect()
@@ -391,11 +383,9 @@ while True:
         I = pygame.transform.scale(I,newRect[2:4])
         offsetRect = (int((screenWidth-newRect[2])/2),int((screenHeight-newRect[3])/2))
 
-
 ##    # write in data files
-##    dataStr = "\n{time},{lamb},{tau},{pup},{pdown},{avail:b},{click:b},{out:b}".format(time=time.time()-startTime,lamb=lambdaVal,tau=stimTau,pup=pup,pdown=pdown,avail=avail,click=wasClicked,out=(time.time()-lastTimeOut)<timeOut)
-##    fidData.write(dataStr)
-
+    dataStr = "\n{time},{stim},{click:b},{out:b}".format(time=time.time()-startTime,click=wasClicked,out=(time.time()-lastTimeOut)<timeOut)
+    fidData.write(dataStr)
 
     # display frame
     if not inTimeOut:
@@ -405,15 +395,6 @@ while True:
         win.fill((64,64,64))
     pygame.display.flip()
     clock.tick(refreshRate)
-
-
-##    # ping server
-##    if (time.time()-lastPing)>pingInterval:
-##        tList = pingServer(sock)
-##        lastPing = time.time()
-##        synchStr = "\n{client1},{server},{client2}".format(client1=tList[0],server=tList[2],client2=tList[1])
-##        fidSynch.write(synchStr)
-
 
     # quit if key press, button press or reward max
     keys = pygame.key.get_pressed()
