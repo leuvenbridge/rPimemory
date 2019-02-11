@@ -3,10 +3,10 @@
 # This bash script pulls git repo, commit changes and push the repo back
 
 # cd to git local repo
-cd ~/Documents/git/rPi
+cd ~/Documents/git/rPimemory
 
 # pull repo
-git pull ssh://git@github.com/foragingBRAIN/rPi.git
+git pull ssh://git@github.com/foragingBRAIN/rPimemory.git
 
 # add all changes
 git add -A
@@ -18,5 +18,5 @@ now=$(date +%Y_%m_%d-%H_%M_%S)
 git commit -m "rPi $now"
 
 # push commit
-git push ssh://git@github.com/foragingBRAIN/rPi.git
+git push ssh://git@github.com/foragingBRAIN/rPimemory.git
 

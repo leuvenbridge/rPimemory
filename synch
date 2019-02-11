@@ -1,7 +1,8 @@
 [Desktop Entry]
 Version=1.0
 Name=synch
-Exec=sh /home/pi/Documents/git/rPi/git_autocommit.sh
+Exec=sh /home/pi/Documents/git/rPimemory/git_autocommit.sh
 Terminal=true
-Icon=/home/pi/Documents/git/rPi/synch.png
+Icon=/home/pi/Documents/git/rPimemory/synchmemory.png
 Type=Application
+Name[en_GB]=synchmemory

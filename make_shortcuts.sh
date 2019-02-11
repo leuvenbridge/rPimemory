@@ -6,4 +6,4 @@
 cp ~/Documents/git/rPi/foraging ~/Desktop/foraging
 
 # synch shortcut
-cp ~/Documents/git/rPi/synch ~/Desktop/synch
+cp ~/Documents/git/rPimemory/synchmemory ~/Desktop/synchmemory
