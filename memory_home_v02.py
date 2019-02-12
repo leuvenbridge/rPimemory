@@ -1,5 +1,4 @@
 
-
 # load libraries
 import os, sys, time, math, random, pygame, numpy, imageio
 from pygame.locals import *
@@ -22,7 +21,7 @@ except ImportError:
 
 
 # stim param
-imagesFolder = '/home/pi/Pictures/png4/'
+imagesFolder = '/home/pi/Documents/git/rPimemory/stim_20190211'
 screenWidth = 800
 screenHeight = 480
 refreshRate = 60
@@ -285,9 +284,9 @@ time.sleep(0.25)
 # create and load files
 currDate = time.localtime(time.time())
 clutPath = rootPath + "/clut.txt"
-dataPath = rootPath + "/data/" + monkeyList[monkey+1]+ "_task"+str(task+1)+ "_{year}-{month}-{day}_{hours}-{minutes}-{seconds}.dat".format(year=currDate[0],month=currDate[1],day=currDate[2],hours=currDate[3],minutes=currDate[4],seconds=currDate[5])
-logPath = rootPath + "/data/" + monkeyList[monkey+1]+"_task"+str(task+1)+"_{year}-{month}-{day}_{hours}-{minutes}-{seconds}.log".format(year=currDate[0],month=currDate[1],day=currDate[2],hours=currDate[3],minutes=currDate[4],seconds=currDate[5])
-pingPath = rootPath + "/data/" + monkeyList[monkey+1]+"_task"+str(task+1)+"_{year}-{month}-{day}_{hours}-{minutes}-{seconds}.synch".format(year=currDate[0],month=currDate[1],day=currDate[2],hours=currDate[3],minutes=currDate[4],seconds=currDate[5])
+dataPath = rootPath + "/data/" + monkeyList[monkey]+ "_task"+str(task+1)+ "_{year}-{month}-{day}_{hours}-{minutes}-{seconds}.dat".format(year=currDate[0],month=currDate[1],day=currDate[2],hours=currDate[3],minutes=currDate[4],seconds=currDate[5])
+logPath = rootPath + "/data/" + monkeyList[monkey]+"_task"+str(task+1)+"_{year}-{month}-{day}_{hours}-{minutes}-{seconds}.log".format(year=currDate[0],month=currDate[1],day=currDate[2],hours=currDate[3],minutes=currDate[4],seconds=currDate[5])
+pingPath = rootPath + "/data/" + monkeyList[monkey]+"_task"+str(task+1)+"_{year}-{month}-{day}_{hours}-{minutes}-{seconds}.synch".format(year=currDate[0],month=currDate[1],day=currDate[2],hours=currDate[3],minutes=currDate[4],seconds=currDate[5])
 fidData = open(dataPath,"w")
 fidLog = open(logPath,"w")
 fidSynch = open(logPath,"w")
@@ -338,6 +337,16 @@ while True:
                 newStim = 1
             else:
                 lastTimeOut = time.time()
+                stimNumber = 0
+                stimName = '{stimFolder:s}/{stimNumber:d}_r0.png'.format(stimFolder=imagesFolder,stimNumber=stimNumber)
+                I = pygame.image.load(stimName)
+                oldRect = I.get_rect()
+                newRect = tuple(rr*stimScale for rr in oldRect)
+                I = pygame.transform.scale(I,newRect[2:4])
+                offsetRect = (int((screenWidth-newRect[2])/2),int((screenHeight-newRect[3])/2))
+                while True:
+                    thisTime = time.time()
+                    if thisTime - lastTimeOut >
                 # ToDo: display black screen for n seconds
                 # add sound
                 
@@ -355,7 +364,7 @@ while True:
     if newStim:
         newStim = 0
         stimNumber = random.choice(displayStim)
-        stimName = '{stimFolder:s}/{stimNumber:d}/{stimNumber:d}_r0.png'.format(stimFolder=imagesFolder,stimNumber=stimNumber)
+        stimName = '{stimFolder:s}/{stimNumber:d}_r0.png'.format(stimFolder=imagesFolder,stimNumber=stimNumber)
         I = pygame.image.load(stimName)
         oldRect = I.get_rect()
         newRect = tuple(rr*stimScale for rr in oldRect)
