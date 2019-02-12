@@ -291,7 +291,7 @@ fidData = open(dataPath,"w")
 fidLog = open(logPath,"w")
 fidSync = open(syncPath,'w')
 
-dataStr = "time,whichstim,iftouch,ifout"
+dataStr = "time,whichstim,iftouch,ifreward,ifout"
 fidData.write(dataStr)
 logStr = "time,type,value"
 fidLog.write(logStr)
@@ -312,13 +312,12 @@ giveReward = 0
 I = numpy.zeros((screenWidth,screenHeight,3))
 
 wasClicked = 0
+ifReward = 0
 displayStim = [1,2,3,4,5]
 rewardStim  = [1]
 
 # wait for server command to start
 # TCP_IP communication with laptop
-#dataStr = "\n{time},{stim},{click:b},{out:b}".format(time=time.time()-startTime,stim=stimNumber,click=wasClicked,out=(time.time()-lastTimeOut)<timeOut)
-#fidData.write(dataStr)
 
 #TCP_IP = '192.168.0.105'   # Pi IP
 #TCP_PORT = 1234
@@ -357,7 +356,7 @@ while True:
                 lastSwitch = time.time()
                 rewardsNum = rewardsNum+1
                 if rPi:
-                    a = 1
+                    ifReward = 1
                     #motorCurrStep = drop_pellet(motorCurrStep)
 					# add sound
 					# snd1.play(loops=0)
@@ -365,19 +364,7 @@ while True:
             else:
                 lastTimeOut = time.time()
                 inTimeOut = 1
-		# add sound
-		# display black screen for n seconds
-                # stimNumber = 0
-                # stimName = '{stimFolder:s}/{stimNumber:d}_r0.png'.format(stimFolder=imagesFolder,stimNumber=stimNumber)
-                # I = pygame.image.load(stimName)
-                # oldRect = I.get_rect()
-                # newRect = tuple(rr*stimScale for rr in oldRect)
-                # I = pygame.transform.scale(I,newRect[2:4])
-                # offsetRect = (int((screenWidth-newRect[2])/2),int((screenHeight-newRect[3])/2))
-                # while True:
-                    # thisTime = time.time()
-                    # if thisTime - lastTimeOut > 2:
-                        # break
+                ifReward = 0
 					
         wasClicked = 1
     else:
@@ -402,7 +389,7 @@ while True:
         offsetRect = (int((screenWidth-newRect[2])/2),int((screenHeight-newRect[3])/2))
 
     # write in data files
-    dataStr = "\n{time},{stim},{click:b},{out:b}".format(time=time.time()-startTime,stim=stimNumber,click=wasClicked,out=(time.time()-lastTimeOut)<timeOut)
+    dataStr = "\n{time},{stim},{click:b},{reward:b},{out:b}".format(time=time.time()-startTime,stim=stimNumber,click=wasClicked,reward=wasClicked and ifReward,out=(time.time()-lastTimeOut)<timeOut)
     fidData.write(dataStr)
 
     # display frame
