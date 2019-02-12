@@ -28,7 +28,7 @@ refreshRate = 60
 rewardsMax = 200
 timeMax = 1
 timeOut = 2
-stimScale = 3
+stimScale = 1
 
 # feedback params
 sndFreq1 = 1000
