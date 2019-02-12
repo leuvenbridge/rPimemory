@@ -1,6 +1,6 @@
 import socket, time
 
-TCP_IP = '192.168.0.105'  # laptop IP
+TCP_IP = '192.168.0.105'  # pi IP
 TCP_PORT = 1234
 BUFFER_SIZE = 24
 
