@@ -196,7 +196,7 @@ winCenter = (int(screenWidth/2),int(screenHeight/2))
 # # makes sounds
 
 # select animal
-monkeyList = ('Ody','Kraut','Hansel','Lysander','Achilles','Schodinger','Quigley','Test')
+monkeyList = ('Ody','Kraut','Bruno','Lysander','Achilles','Schodinger','Quigley','Test')
 textCenter = numpy.array([[150,80],[400,80],[650,80],[150,240],[400,240],[650,240],[150,400],[650,400]])
 rectSize = numpy.array([200,120])
 textSurf = []
@@ -286,7 +286,7 @@ currDate = time.localtime(time.time())
 clutPath = rootPath + "/clut.txt"
 dataPath = rootPath + "/data/" + monkeyList[monkey]+ "_task"+str(task+1)+ "_{year}-{month}-{day}_{hours}-{minutes}-{seconds}.dat".format(year=currDate[0],month=currDate[1],day=currDate[2],hours=currDate[3],minutes=currDate[4],seconds=currDate[5])
 logPath = rootPath + "/data/" + monkeyList[monkey]+"_task"+str(task+1)+"_{year}-{month}-{day}_{hours}-{minutes}-{seconds}.log".format(year=currDate[0],month=currDate[1],day=currDate[2],hours=currDate[3],minutes=currDate[4],seconds=currDate[5])
-SyncPath = rootPath + "/data/" + monkeyList[monkey]+"_task"+str(task+1)+"_{year}-{month}-{day}_{hours}-{minutes}-{seconds}.sync".format(year=currDate[0],month=currDate[1],day=currDate[2],hours=currDate[3],minutes=currDate[4],seconds=currDate[5])
+syncPath = rootPath + "/data/" + monkeyList[monkey]+"_task"+str(task+1)+"_{year}-{month}-{day}_{hours}-{minutes}-{seconds}.sync".format(year=currDate[0],month=currDate[1],day=currDate[2],hours=currDate[3],minutes=currDate[4],seconds=currDate[5])
 fidData = open(dataPath,"w")
 fidLog = open(logPath,"w")
 fidSync = open(syncPath,'w')
@@ -317,9 +317,8 @@ rewardStim  = [1]
 
 # wait for server command to start
 # TCP_IP communication with laptop
-
-    dataStr = "\n{time},{stim},{click:b},{out:b}".format(time=time.time()-startTime,stim=stimNumber,click=wasClicked,out=(time.time()-lastTimeOut)<timeOut)
-    fidData.write(dataStr)
+#dataStr = "\n{time},{stim},{click:b},{out:b}".format(time=time.time()-startTime,stim=stimNumber,click=wasClicked,out=(time.time()-lastTimeOut)<timeOut)
+#fidData.write(dataStr)
 
 #TCP_IP = '192.168.0.105'   # Pi IP
 #TCP_PORT = 1234
@@ -365,9 +364,9 @@ while True:
                 newStim = 1
             else:
                 lastTimeOut = time.time()
-				inTimeOut = 1
-				# add sound
-				# display black screen for n seconds
+                inTimeOut = 1
+		# add sound
+		# display black screen for n seconds
                 # stimNumber = 0
                 # stimName = '{stimFolder:s}/{stimNumber:d}_r0.png'.format(stimFolder=imagesFolder,stimNumber=stimNumber)
                 # I = pygame.image.load(stimName)
@@ -378,7 +377,7 @@ while True:
                 # while True:
                     # thisTime = time.time()
                     # if thisTime - lastTimeOut > 2:
-					# break
+                        # break
 					
         wasClicked = 1
     else:
@@ -389,7 +388,7 @@ while True:
         newStim = 1
         lastSwitch = time.time()
     elif inTimeOut and (time.time()-lastTimeOut)>timeOut:
-		inTimeOut = 0
+        inTimeOut = 0
         newstim = 1
         
     if newStim:
