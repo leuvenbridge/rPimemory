@@ -27,7 +27,7 @@ screenHeight = 480
 refreshRate = 60
 rewardsMax = 200
 timeMax = 1
-timeOut = 1
+timeOut = 2
 stimScale = 3
 
 # feedback params
@@ -286,21 +286,19 @@ currDate = time.localtime(time.time())
 clutPath = rootPath + "/clut.txt"
 dataPath = rootPath + "/data/" + monkeyList[monkey]+ "_task"+str(task+1)+ "_{year}-{month}-{day}_{hours}-{minutes}-{seconds}.dat".format(year=currDate[0],month=currDate[1],day=currDate[2],hours=currDate[3],minutes=currDate[4],seconds=currDate[5])
 logPath = rootPath + "/data/" + monkeyList[monkey]+"_task"+str(task+1)+"_{year}-{month}-{day}_{hours}-{minutes}-{seconds}.log".format(year=currDate[0],month=currDate[1],day=currDate[2],hours=currDate[3],minutes=currDate[4],seconds=currDate[5])
-pingPath = rootPath + "/data/" + monkeyList[monkey]+"_task"+str(task+1)+"_{year}-{month}-{day}_{hours}-{minutes}-{seconds}.synch".format(year=currDate[0],month=currDate[1],day=currDate[2],hours=currDate[3],minutes=currDate[4],seconds=currDate[5])
+SyncPath = rootPath + "/data/" + monkeyList[monkey]+"_task"+str(task+1)+"_{year}-{month}-{day}_{hours}-{minutes}-{seconds}.sync".format(year=currDate[0],month=currDate[1],day=currDate[2],hours=currDate[3],minutes=currDate[4],seconds=currDate[5])
 fidData = open(dataPath,"w")
 fidLog = open(logPath,"w")
-fidSynch = open(logPath,"w")
-##dataStr = "time,lambda,tau,pup,pdown,avail,click,timeout"
-dataStr = "time,"
+fidSync = open(syncPath,'w')
+
+dataStr = "time,whichstim,iftouch,ifout"
 fidData.write(dataStr)
 logStr = "time,type,value"
 fidLog.write(logStr)
-synchStr = "client1,server,client2"
-fidSynch.write(synchStr)
+syncStr = "commTime,commAddress,commContent"
+fidSync.write(syncStr)
 
 # start main loop
-startTime = time.time()
-
 pygame.event.clear()
 
 target = 1
@@ -317,6 +315,36 @@ wasClicked = 0
 displayStim = [1,2,3,4,5]
 rewardStim  = [1]
 
+# wait for server command to start
+# TCP_IP communication with laptop
+
+    dataStr = "\n{time},{stim},{click:b},{out:b}".format(time=time.time()-startTime,stim=stimNumber,click=wasClicked,out=(time.time()-lastTimeOut)<timeOut)
+    fidData.write(dataStr)
+
+#TCP_IP = '192.168.0.105'   # Pi IP
+#TCP_PORT = 1234
+#BUFFER_SIZE = 24
+#s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+#s.bind((TCP_IP, TCP_PORT))
+#s.listen(1)
+#conn, addr = s.accept()
+#commTime = time.time()
+#syncStr = "\n{time},{addr},{content}".format(time=time.time(),addr=addr,content="ReceiveTime")
+#fidSync.write(syncStr)
+#commAddr = addr
+#while 1:
+#    data = conn.recv(BUFFER_SIZE)
+#    if data:
+#        commData = data
+#        conn.send(data)
+#        commechoTime = time.time()
+#		 syncStr = "\n{time},{addr},{content}".format(time=time.time(),addr=addr,content="EchoTime")
+#		 fidSync.write(syncStr)
+#        break
+#conn.close()
+
+startTime = time.time()
+
 while True:
 
     pygame.event.pump()
@@ -332,24 +360,26 @@ while True:
                 if rPi:
                     a = 1
                     #motorCurrStep = drop_pellet(motorCurrStep)
-                # add sound
-                # snd1.play(loops=0)
+					# add sound
+					# snd1.play(loops=0)
                 newStim = 1
             else:
                 lastTimeOut = time.time()
-                stimNumber = 0
-                stimName = '{stimFolder:s}/{stimNumber:d}_r0.png'.format(stimFolder=imagesFolder,stimNumber=stimNumber)
-                I = pygame.image.load(stimName)
-                oldRect = I.get_rect()
-                newRect = tuple(rr*stimScale for rr in oldRect)
-                I = pygame.transform.scale(I,newRect[2:4])
-                offsetRect = (int((screenWidth-newRect[2])/2),int((screenHeight-newRect[3])/2))
-                while True:
-                    thisTime = time.time()
-                    if thisTime - lastTimeOut >
-                # ToDo: display black screen for n seconds
-                # add sound
-                
+				inTimeOut = 1
+				# add sound
+				# display black screen for n seconds
+                # stimNumber = 0
+                # stimName = '{stimFolder:s}/{stimNumber:d}_r0.png'.format(stimFolder=imagesFolder,stimNumber=stimNumber)
+                # I = pygame.image.load(stimName)
+                # oldRect = I.get_rect()
+                # newRect = tuple(rr*stimScale for rr in oldRect)
+                # I = pygame.transform.scale(I,newRect[2:4])
+                # offsetRect = (int((screenWidth-newRect[2])/2),int((screenHeight-newRect[3])/2))
+                # while True:
+                    # thisTime = time.time()
+                    # if thisTime - lastTimeOut > 2:
+					# break
+					
         wasClicked = 1
     else:
         wasClicked = 0
@@ -359,6 +389,7 @@ while True:
         newStim = 1
         lastSwitch = time.time()
     elif inTimeOut and (time.time()-lastTimeOut)>timeOut:
+		inTimeOut = 0
         newstim = 1
         
     if newStim:
@@ -371,7 +402,7 @@ while True:
         I = pygame.transform.scale(I,newRect[2:4])
         offsetRect = (int((screenWidth-newRect[2])/2),int((screenHeight-newRect[3])/2))
 
-##    # write in data files
+    # write in data files
     dataStr = "\n{time},{stim},{click:b},{out:b}".format(time=time.time()-startTime,stim=stimNumber,click=wasClicked,out=(time.time()-lastTimeOut)<timeOut)
     fidData.write(dataStr)
 
@@ -380,7 +411,7 @@ while True:
         win.fill((0,0,0))
         win.blit(I,offsetRect)
     else:
-        win.fill((64,64,64))
+        win.fill((0,0,0))
     pygame.display.flip()
     clock.tick(refreshRate)
 
