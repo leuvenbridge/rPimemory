@@ -1,6 +1,6 @@
 
 # load libraries
-import os, sys, time, math, random, pygame, numpy, imageio
+import os, sys, time, math, random, pygame, numpy, imageio, socket
 from pygame.locals import *
 
 try:
@@ -25,10 +25,10 @@ imagesFolder = '/home/pi/Documents/git/rPimemory/stim_20190211'
 screenWidth = 800
 screenHeight = 480
 refreshRate = 60
-rewardsMax = 200
+rewardsMax = 5
 timeMax = 1
 timeOut = 2
-stimScale = 3
+stimScale = 1
 
 # feedback params
 sndFreq1 = 1000
@@ -56,6 +56,17 @@ pinLedO = 23
 pingInterval = 10
 
 # define functions
+def syncTCP():
+    TCP_IP = '192.168.0.106'   # laptop IP
+    TCP_PORT = 1234
+    BUFFER_SIZE = 1024
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.connect((TCP_IP, TCP_PORT))
+    dataStr = "\n{time},{stim},{click:b},{reward:b},{out:b}".format(time=time.time(),stim=9999,click=0,reward=0,out=0)
+    fidData.write(dataStr)
+    MESSAGE = "Pi Stopped!"
+    s.send((MESSAGE).encode())
+
 def quitprogram(circ):
     logStr = "\n{time},3,circ".format(time=time.time()-startTime)
     fidLog.write(logStr)
@@ -196,7 +207,7 @@ winCenter = (int(screenWidth/2),int(screenHeight/2))
 # # makes sounds
 
 # select animal
-monkeyList = ('Ody','Kraut','Hansel','Lysander','Achilles','Schodinger','Quigley','Test')
+monkeyList = ('Ody','Kraut','Bruno','Lysander','Achilles','Schodinger','Quigley','Test')
 textCenter = numpy.array([[150,80],[400,80],[650,80],[150,240],[400,240],[650,240],[150,400],[650,400]])
 rectSize = numpy.array([200,120])
 textSurf = []
@@ -286,16 +297,16 @@ currDate = time.localtime(time.time())
 clutPath = rootPath + "/clut.txt"
 dataPath = rootPath + "/data/" + monkeyList[monkey]+ "_task"+str(task+1)+ "_{year}-{month}-{day}_{hours}-{minutes}-{seconds}.dat".format(year=currDate[0],month=currDate[1],day=currDate[2],hours=currDate[3],minutes=currDate[4],seconds=currDate[5])
 logPath = rootPath + "/data/" + monkeyList[monkey]+"_task"+str(task+1)+"_{year}-{month}-{day}_{hours}-{minutes}-{seconds}.log".format(year=currDate[0],month=currDate[1],day=currDate[2],hours=currDate[3],minutes=currDate[4],seconds=currDate[5])
-SyncPath = rootPath + "/data/" + monkeyList[monkey]+"_task"+str(task+1)+"_{year}-{month}-{day}_{hours}-{minutes}-{seconds}.sync".format(year=currDate[0],month=currDate[1],day=currDate[2],hours=currDate[3],minutes=currDate[4],seconds=currDate[5])
+syncPath = rootPath + "/data/" + monkeyList[monkey]+"_task"+str(task+1)+"_{year}-{month}-{day}_{hours}-{minutes}-{seconds}.sync".format(year=currDate[0],month=currDate[1],day=currDate[2],hours=currDate[3],minutes=currDate[4],seconds=currDate[5])
 fidData = open(dataPath,"w")
 fidLog = open(logPath,"w")
 fidSync = open(syncPath,'w')
 
-dataStr = "time,whichstim,iftouch,ifout"
+dataStr = "time,whichstim,iftouch,ifreward,ifout"
 fidData.write(dataStr)
 logStr = "time,type,value"
 fidLog.write(logStr)
-syncStr = "commTime,commAddress,commContent"
+syncStr = "commTime,commContent"
 fidSync.write(syncStr)
 
 # start main loop
@@ -312,36 +323,32 @@ giveReward = 0
 I = numpy.zeros((screenWidth,screenHeight,3))
 
 wasClicked = 0
+ifReward = 0
 displayStim = [1,2,3,4,5]
 rewardStim  = [1]
 
 # wait for server command to start
 # TCP_IP communication with laptop
 
-    dataStr = "\n{time},{stim},{click:b},{out:b}".format(time=time.time()-startTime,stim=stimNumber,click=wasClicked,out=(time.time()-lastTimeOut)<timeOut)
+TCP_IP = '192.168.0.102'   # Pi IP
+TCP_PORT = 1234
+BUFFER_SIZE = 24
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.bind((TCP_IP, TCP_PORT))
+s.listen(1)
+conn, addr = s.accept()
+dataStr = "\n{time},{stim},{click:b},{reward:b},{out:b}".format(time=time.time(),stim=9999,click=0,reward=0,out=0)
+fidData.write(dataStr)
+commAddr = addr
+while 1:
+    data = conn.recv(BUFFER_SIZE)
+    if not data: break
+    commData = data
+    conn.send(data)
+    commechoTime = time.time()
+    dataStr = "\n{time},{stim},{click:b},{reward:b},{out:b}".format(time=time.time(),stim=9999,click=0,reward=0,out=0)
     fidData.write(dataStr)
-
-#TCP_IP = '192.168.0.105'   # Pi IP
-#TCP_PORT = 1234
-#BUFFER_SIZE = 24
-#s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-#s.bind((TCP_IP, TCP_PORT))
-#s.listen(1)
-#conn, addr = s.accept()
-#commTime = time.time()
-#syncStr = "\n{time},{addr},{content}".format(time=time.time(),addr=addr,content="ReceiveTime")
-#fidSync.write(syncStr)
-#commAddr = addr
-#while 1:
-#    data = conn.recv(BUFFER_SIZE)
-#    if data:
-#        commData = data
-#        conn.send(data)
-#        commechoTime = time.time()
-#		 syncStr = "\n{time},{addr},{content}".format(time=time.time(),addr=addr,content="EchoTime")
-#		 fidSync.write(syncStr)
-#        break
-#conn.close()
+conn.close()
 
 startTime = time.time()
 
@@ -358,27 +365,15 @@ while True:
                 lastSwitch = time.time()
                 rewardsNum = rewardsNum+1
                 if rPi:
-                    a = 1
-                    #motorCurrStep = drop_pellet(motorCurrStep)
-					# add sound
-					# snd1.play(loops=0)
+                    ifReward = 1
+                    motorCurrStep = drop_pellet(motorCurrStep)
+		    # add sound
+		    # snd1.play(loops=0)
                 newStim = 1
             else:
                 lastTimeOut = time.time()
-				inTimeOut = 1
-				# add sound
-				# display black screen for n seconds
-                # stimNumber = 0
-                # stimName = '{stimFolder:s}/{stimNumber:d}_r0.png'.format(stimFolder=imagesFolder,stimNumber=stimNumber)
-                # I = pygame.image.load(stimName)
-                # oldRect = I.get_rect()
-                # newRect = tuple(rr*stimScale for rr in oldRect)
-                # I = pygame.transform.scale(I,newRect[2:4])
-                # offsetRect = (int((screenWidth-newRect[2])/2),int((screenHeight-newRect[3])/2))
-                # while True:
-                    # thisTime = time.time()
-                    # if thisTime - lastTimeOut > 2:
-					# break
+                inTimeOut = 1
+                ifReward = 0
 					
         wasClicked = 1
     else:
@@ -389,7 +384,7 @@ while True:
         newStim = 1
         lastSwitch = time.time()
     elif inTimeOut and (time.time()-lastTimeOut)>timeOut:
-		inTimeOut = 0
+        inTimeOut = 0
         newstim = 1
         
     if newStim:
@@ -403,7 +398,7 @@ while True:
         offsetRect = (int((screenWidth-newRect[2])/2),int((screenHeight-newRect[3])/2))
 
     # write in data files
-    dataStr = "\n{time},{stim},{click:b},{out:b}".format(time=time.time()-startTime,stim=stimNumber,click=wasClicked,out=(time.time()-lastTimeOut)<timeOut)
+    dataStr = "\n{time},{stim},{click:b},{reward:b},{out:b}".format(time=time.time()-startTime,stim=stimNumber,click=wasClicked,reward=wasClicked and ifReward,out=(time.time()-lastTimeOut)<timeOut)
     fidData.write(dataStr)
 
     # display frame
@@ -418,9 +413,12 @@ while True:
     # quit if key press, button press or reward max
     keys = pygame.key.get_pressed()
     if keys[K_q]:
+        syncTCP()
         quitprogram(3)
     if rPi and io.input(pinButton):
+        syncTCP()
         quitprogram(2)
     if (rewardsNum==rewardsMax):
+        syncTCP()
         quitprogram(1)
 
