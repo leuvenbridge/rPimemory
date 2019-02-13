@@ -366,9 +366,9 @@ while True:
                 rewardsNum = rewardsNum+1
                 if rPi:
                     ifReward = 1
-                    #motorCurrStep = drop_pellet(motorCurrStep)
-					# add sound
-					# snd1.play(loops=0)
+                    motorCurrStep = drop_pellet(motorCurrStep)
+		    # add sound
+		    # snd1.play(loops=0)
                 newStim = 1
             else:
                 lastTimeOut = time.time()
