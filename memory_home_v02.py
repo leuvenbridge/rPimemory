@@ -197,8 +197,8 @@ else:
 
 # start pygame
 pygame.init()
-##win = pygame.display.set_mode((screenWidth,screenHeight), pygame.FULLSCREEN, 32)
-win = pygame.display.set_mode((screenWidth,screenHeight), 32)
+win = pygame.display.set_mode((screenWidth,screenHeight), pygame.FULLSCREEN, 32)
+##win = pygame.display.set_mode((screenWidth,screenHeight), 32)
 clock = pygame.time.Clock()
 pygame.font.init()
 myfont = pygame.font.SysFont('Helvetica', 30)
@@ -299,6 +299,8 @@ time.sleep(0.25)
 currDate = time.localtime(time.time())
 dataPath = rootPath + "/data/" + monkeyList[monkey]+ "_task"+str(task+1)+ "_{year}-{month}-{day}_{hours}-{minutes}-{seconds}.dat".format(year=currDate[0],month=currDate[1],day=currDate[2],hours=currDate[3],minutes=currDate[4],seconds=currDate[5])
 fidData = open(dataPath,"w")
+logPath = rootPath + "/data/" + monkeyList[monkey]+ "_task"+str(task+1)+ "_{year}-{month}-{day}_{hours}-{minutes}-{seconds}.log".format(year=currDate[0],month=currDate[1],day=currDate[2],hours=currDate[3],minutes=currDate[4],seconds=currDate[5])
+fidlog = open(logPath,"w")
 
 # start main loop
 pygame.event.clear()
@@ -318,15 +320,15 @@ ifReward = 0
 displayStim = [999,1000]
 rewardStim  = [999]
 
-fidData.write("\n")
 dataStr = "All stim."
 fidData.write(dataStr)
-dataStr = "\n{stimno}".format(stimno=displayStim)
+fidData.write("\n")
+fidData.write(str(displayStim))
 fidData.write("\n")
 dataStr = "Reward stim."
 fidData.write(dataStr)
-dataStr = "\n{stimno}".format(stimno=rewardStim)
-
+fidData.write("\n")
+fidData.write(str(rewardStim))
 
 # wait for server command to start
 # TCP_IP communication with laptop
@@ -370,8 +372,6 @@ while True:
     # check mouse
     if sum(pygame.mouse.get_pressed()):
         if not wasClicked:
-##            logStr = "\n{time},1,{avail}".format(time=time.time()-startTime,avail=avail)
-##            fidLog.write(logStr)
             if stimNumber in rewardStim:
                 lastSwitch = time.time()
                 rewardsNum = rewardsNum+1
@@ -379,6 +379,8 @@ while True:
                     ifReward = 1
                     motorCurrStep = drop_pellet(motorCurrStep)
                     while True:
+                        dataStr = "\n{time},{stim},{click:b},{reward:b},{out:b}".format(time=time.time()-startTime,stim=stimNumber,click=wasClicked,reward=wasClicked and ifReward,out=(time.time()-lastTimeOut)<timeOut)
+                        fidData.write(dataStr)
                         if (time.time()-lastSwitch)>=1:
                             break
                 newStim = 1
