@@ -197,8 +197,8 @@ else:
 
 # start pygame
 pygame.init()
-win = pygame.display.set_mode((screenWidth,screenHeight), pygame.FULLSCREEN, 32)
-##win = pygame.display.set_mode((screenWidth,screenHeight), 32)
+##win = pygame.display.set_mode((screenWidth,screenHeight), pygame.FULLSCREEN, 32)
+win = pygame.display.set_mode((screenWidth,screenHeight), 32)
 clock = pygame.time.Clock()
 pygame.font.init()
 myfont = pygame.font.SysFont('Helvetica', 30)
@@ -300,7 +300,7 @@ currDate = time.localtime(time.time())
 dataPath = rootPath + "/data/" + monkeyList[monkey]+ "_task"+str(task+1)+ "_{year}-{month}-{day}_{hours}-{minutes}-{seconds}.dat".format(year=currDate[0],month=currDate[1],day=currDate[2],hours=currDate[3],minutes=currDate[4],seconds=currDate[5])
 fidData = open(dataPath,"w")
 logPath = rootPath + "/data/" + monkeyList[monkey]+ "_task"+str(task+1)+ "_{year}-{month}-{day}_{hours}-{minutes}-{seconds}.log".format(year=currDate[0],month=currDate[1],day=currDate[2],hours=currDate[3],minutes=currDate[4],seconds=currDate[5])
-fidlog = open(logPath,"w")
+fidLog = open(logPath,"w")
 
 # start main loop
 pygame.event.clear()
