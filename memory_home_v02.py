@@ -21,7 +21,7 @@ except ImportError:
 
 
 # stim param
-imagesFolder = '/home/pi/Documents/git/rPimemory/stim_20190211'
+imagesFolder = '/home/pi/Documents/git/rPimemory/stim_20190215'
 screenWidth = 800
 screenHeight = 480
 refreshRate = 60
@@ -62,7 +62,10 @@ def syncTCP():
     BUFFER_SIZE = 1024
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((TCP_IP, TCP_PORT))
-    dataStr = "\n{time},{stim},{click:b},{reward:b},{out:b}".format(time=time.time(),stim=9999,click=0,reward=0,out=0)
+    fidData.write("\n")
+    dataStr = "PiStop sync."
+    fidData.write(dataStr)
+    dataStr = "\n{time}".format(time=time.time())
     fidData.write(dataStr)
     MESSAGE = "Pi Stopped!"
     s.send((MESSAGE).encode())
@@ -294,20 +297,8 @@ time.sleep(0.25)
 
 # create and load files
 currDate = time.localtime(time.time())
-clutPath = rootPath + "/clut.txt"
 dataPath = rootPath + "/data/" + monkeyList[monkey]+ "_task"+str(task+1)+ "_{year}-{month}-{day}_{hours}-{minutes}-{seconds}.dat".format(year=currDate[0],month=currDate[1],day=currDate[2],hours=currDate[3],minutes=currDate[4],seconds=currDate[5])
-logPath = rootPath + "/data/" + monkeyList[monkey]+"_task"+str(task+1)+"_{year}-{month}-{day}_{hours}-{minutes}-{seconds}.log".format(year=currDate[0],month=currDate[1],day=currDate[2],hours=currDate[3],minutes=currDate[4],seconds=currDate[5])
-syncPath = rootPath + "/data/" + monkeyList[monkey]+"_task"+str(task+1)+"_{year}-{month}-{day}_{hours}-{minutes}-{seconds}.sync".format(year=currDate[0],month=currDate[1],day=currDate[2],hours=currDate[3],minutes=currDate[4],seconds=currDate[5])
 fidData = open(dataPath,"w")
-fidLog = open(logPath,"w")
-fidSync = open(syncPath,'w')
-
-dataStr = "time,whichstim,iftouch,ifreward,ifout"
-fidData.write(dataStr)
-logStr = "time,type,value"
-fidLog.write(logStr)
-syncStr = "commTime,commContent"
-fidSync.write(syncStr)
 
 # start main loop
 pygame.event.clear()
@@ -324,31 +315,51 @@ I = numpy.zeros((screenWidth,screenHeight,3))
 
 wasClicked = 0
 ifReward = 0
-displayStim = [1,2,3,4,5]
-rewardStim  = [1]
+displayStim = [999,1000]
+rewardStim  = [999]
+
+fidData.write("\n")
+dataStr = "All stim."
+fidData.write(dataStr)
+dataStr = "\n{stimno}".format(stimno=displayStim)
+fidData.write("\n")
+dataStr = "Reward stim."
+fidData.write(dataStr)
+dataStr = "\n{stimno}".format(stimno=rewardStim)
+
 
 # wait for server command to start
 # TCP_IP communication with laptop
 
-TCP_IP = '192.168.0.102'   # Pi IP
-TCP_PORT = 1234
-BUFFER_SIZE = 24
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.bind((TCP_IP, TCP_PORT))
-s.listen(1)
-conn, addr = s.accept()
-dataStr = "\n{time},{stim},{click:b},{reward:b},{out:b}".format(time=time.time(),stim=9999,click=0,reward=0,out=0)
+##TCP_IP = '192.168.0.105'   # Pi IP
+##TCP_PORT = 1234
+##BUFFER_SIZE = 24
+##s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+##s.bind((TCP_IP, TCP_PORT))
+##s.listen(1)
+##conn, addr = s.accept()
+##fidData.write("\n")
+##dataStr = "PiReceivePC sync."
+##fidData.write(dataStr)
+##dataStr = "\n{time}".format(time=time.time())
+##fidData.write(dataStr)
+##commAddr = addr
+##while 1:
+##    data = conn.recv(BUFFER_SIZE)
+##    if not data: break
+##    commData = data
+##    conn.send(data)
+##    commechoTime = time.time()
+##    fidData.write("\n")
+##    dataStr = "PiSendPC sync."
+##    fidData.write(dataStr)
+##    dataStr = "\n{time}".format(time=time.time())
+##    fidData.write(dataStr)
+##conn.close()
+
+fidData.write("\n")
+dataStr = "time,whichstim,iftouch,ifreward,ifout"
 fidData.write(dataStr)
-commAddr = addr
-while 1:
-    data = conn.recv(BUFFER_SIZE)
-    if not data: break
-    commData = data
-    conn.send(data)
-    commechoTime = time.time()
-    dataStr = "\n{time},{stim},{click:b},{reward:b},{out:b}".format(time=time.time(),stim=9999,click=0,reward=0,out=0)
-    fidData.write(dataStr)
-conn.close()
 
 startTime = time.time()
 
@@ -367,8 +378,9 @@ while True:
                 if rPi:
                     ifReward = 1
                     motorCurrStep = drop_pellet(motorCurrStep)
-		    # add sound
-		    # snd1.play(loops=0)
+                    while True:
+                        if (time.time()-lastSwitch)>=1:
+                            break
                 newStim = 1
             else:
                 lastTimeOut = time.time()
@@ -413,12 +425,12 @@ while True:
     # quit if key press, button press or reward max
     keys = pygame.key.get_pressed()
     if keys[K_q]:
-        syncTCP()
+##        syncTCP()
         quitprogram(3)
     if rPi and io.input(pinButton):
-        syncTCP()
+##        syncTCP()
         quitprogram(2)
     if (rewardsNum==rewardsMax):
-        syncTCP()
+##        syncTCP()
         quitprogram(1)
 
