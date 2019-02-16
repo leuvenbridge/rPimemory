@@ -11,7 +11,6 @@ except ImportError:
     rPi = 0
     pass
 
-
 # LOG ENTRIES
 # 1st col: time
 # 2nd col: event type (1=touch, 2=pellet, 3=quit options, 4=motor action)
@@ -197,8 +196,8 @@ else:
 
 # start pygame
 pygame.init()
-##win = pygame.display.set_mode((screenWidth,screenHeight), pygame.FULLSCREEN, 32)
-win = pygame.display.set_mode((screenWidth,screenHeight), 32)
+win = pygame.display.set_mode((screenWidth,screenHeight), pygame.FULLSCREEN, 32)
+##win = pygame.display.set_mode((screenWidth,screenHeight), 32)
 clock = pygame.time.Clock()
 pygame.font.init()
 myfont = pygame.font.SysFont('Helvetica', 30)
