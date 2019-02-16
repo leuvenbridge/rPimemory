@@ -25,8 +25,8 @@ imagesFolder = '/home/pi/Documents/git/rPimemory/stim_20190215'
 screenWidth = 800
 screenHeight = 480
 refreshRate = 60
-rewardsMax = 5
-timeMax = 1
+rewardsMax = 100
+timeMax = 1.5
 timeOut = 2
 stimScale = 1
 
@@ -317,8 +317,8 @@ I = numpy.zeros((screenWidth,screenHeight,3))
 
 wasClicked = 0
 ifReward = 0
-displayStim = [999,1000]
-rewardStim  = [999]
+displayStim = list(range(995,1001))
+rewardStim  = [995,997,999]
 
 dataStr = "All stim."
 fidData.write(dataStr)
