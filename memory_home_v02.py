@@ -24,13 +24,9 @@ imagesFolder = '/home/pi/Documents/git/rPimemory/stim_20190215'
 screenWidth = 800
 screenHeight = 480
 refreshRate = 60
-<<<<<<< HEAD
-rewardsMax = 50
 timeMax = 1
-=======
 rewardsMax = 100
 timeMax = 1.5
->>>>>>> 8259ca1b05f8274a3818b4d330c5ca09139d919e
 timeOut = 2
 stimScale = 1
 
@@ -202,11 +198,7 @@ else:
 # start pygame
 pygame.init()
 win = pygame.display.set_mode((screenWidth,screenHeight), pygame.FULLSCREEN, 32)
-<<<<<<< HEAD
-#win = pygame.display.set_mode((screenWidth,screenHeight), 32)
-=======
 ##win = pygame.display.set_mode((screenWidth,screenHeight), 32)
->>>>>>> 8259ca1b05f8274a3818b4d330c5ca09139d919e
 clock = pygame.time.Clock()
 pygame.font.init()
 myfont = pygame.font.SysFont('Helvetica', 30)
