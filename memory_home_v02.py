@@ -71,7 +71,7 @@ def syncTCP():
     s.send((MESSAGE).encode())
 
 def quitprogram(circ):
-    logStr = "\n{time},3,circ".format(time=time.time()-startTime)
+    logStr = "\n{time},3,{c}".format(time=time.time()-startTime,c=circ)
     fidLog.write(logStr)
 
     fidLog.close()
