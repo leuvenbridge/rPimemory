@@ -6,3 +6,4 @@ Terminal=true
 Icon=/home/pi/Documents/git/rPimemory/synchmemory.png
 Type=Application
 Name[en_GB]=synchmemory
+Name[en_US]=synchmemory
