@@ -333,16 +333,6 @@ fidData.write(str(rewardStim))
 # wait for server command to start
 # TCP_IP communication with laptop
 
-<<<<<<< HEAD
-TCP_IP = '192.168.0.103'   # Pi IP
-TCP_PORT = 1234
-BUFFER_SIZE = 24
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.bind((TCP_IP, TCP_PORT))
-s.listen(1)
-conn, addr = s.accept()
-dataStr = "\n{time},{stim},{click:b},{reward:b},{out:b}".format(time=time.time(),stim=9999,click=0,reward=0,out=0)
-=======
 ##TCP_IP = '192.168.0.105'   # Pi IP
 ##TCP_PORT = 1234
 ##BUFFER_SIZE = 24
@@ -371,7 +361,6 @@ dataStr = "\n{time},{stim},{click:b},{reward:b},{out:b}".format(time=time.time()
 
 fidData.write("\n")
 dataStr = "time,whichstim,iftouch,ifreward,ifout"
->>>>>>> 2ec6cd59ca9dcae053237317607796af8a437139
 fidData.write(dataStr)
 
 startTime = time.time()
