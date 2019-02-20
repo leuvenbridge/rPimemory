@@ -6,3 +6,4 @@ Terminal=false
 Icon=/home/pi/Documents/git/rPimemory/monkey.png
 Type=Application
 Name[en_GB]=foragingmemory
+Name[en_US]=foragingmemory

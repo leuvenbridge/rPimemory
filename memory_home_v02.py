@@ -11,7 +11,6 @@ except ImportError:
     rPi = 0
     pass
 
-
 # LOG ENTRIES
 # 1st col: time
 # 2nd col: event type (1=touch, 2=pellet, 3=quit options, 4=motor action)
@@ -19,14 +18,13 @@ except ImportError:
 #           2=button press, 3="q" press and 4=pellet failing to drop;
 #           motor: 1=ck, 2=cck
 
-
 # stim param
-imagesFolder = '/home/pi/Documents/git/rPimemory/stim_20190211'
+imagesFolder = '/home/pi/Documents/git/rPimemory/stim_20190215'
 screenWidth = 800
 screenHeight = 480
 refreshRate = 60
-rewardsMax = 5
-timeMax = 1
+rewardsMax = 150
+timeMax = 1.5
 timeOut = 2
 stimScale = 1
 
@@ -57,20 +55,22 @@ pingInterval = 10
 
 # define functions
 def syncTCP():
-    TCP_IP = '192.168.0.106'   # laptop IP
+    TCP_IP = '192.168.0.107'   # laptop IP
     TCP_PORT = 1234
     BUFFER_SIZE = 1024
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((TCP_IP, TCP_PORT))
-    dataStr = "\n{time},{stim},{click:b},{reward:b},{out:b}".format(time=time.time(),stim=9999,click=0,reward=0,out=0)
+    fidData.write("\n")
+    dataStr = "PiStop sync."
+    fidData.write(dataStr)
+    dataStr = "\n{time}".format(time=time.time())
     fidData.write(dataStr)
     MESSAGE = "Pi Stopped!"
     s.send((MESSAGE).encode())
 
 def quitprogram(circ):
-    logStr = "\n{time},3,circ".format(time=time.time()-startTime)
+    logStr = "\n{time},3,{c}".format(time=time.time(),c=circ)
     fidLog.write(logStr)
-
     fidLog.close()
     fidData.close()
     if (monkey==7):
@@ -146,13 +146,13 @@ if rPi:
         pelletDropped = 0
         io.output(pinEnable, True)
         for aa in range(motorAttempts):
-            logStr = "\n{time},4,1".format(time=time.time()-startTime)
+            logStr = "\n{time},4,1".format(time=time.time())
             fidLog.write(logStr)
             startingStep = motor_ck(startingStep)
             if pelletDropped:
                 break
             else:
-                logStr = "\n{time},4,2".format(time=time.time()-startTime)
+                logStr = "\n{time},4,2".format(time=time.time())
                 fidLog.write(logStr)
                 startingStep = motor_cck(startingStep)
                 if pelletDropped:
@@ -168,7 +168,7 @@ if rPi:
     def photo_callback(chan):
         global pelletDropped
         pelletDropped = 1
-        logStr = "\n{time},2,1".format(time=time.time()-startTime)
+        logStr = "\n{time},2,1".format(time=time.time())
         fidLog.write(logStr)
 
     # activate pins
@@ -194,8 +194,8 @@ else:
 
 # start pygame
 pygame.init()
-##win = pygame.display.set_mode((screenWidth,screenHeight), pygame.FULLSCREEN, 32)
-win = pygame.display.set_mode((screenWidth,screenHeight), 32)
+win = pygame.display.set_mode((screenWidth,screenHeight), pygame.FULLSCREEN, 32)
+##win = pygame.display.set_mode((screenWidth,screenHeight), 32)
 clock = pygame.time.Clock()
 pygame.font.init()
 myfont = pygame.font.SysFont('Helvetica', 30)
@@ -204,7 +204,7 @@ if rPi:
 winSize = (screenWidth,screenHeight)
 winCenter = (int(screenWidth/2),int(screenHeight/2))
 
-# # makes sounds
+# makes sounds
 
 # select animal
 monkeyList = ('Ody','Kraut','Bruno','Lysander','Achilles','Schodinger','Quigley','Test')
@@ -294,20 +294,10 @@ time.sleep(0.25)
 
 # create and load files
 currDate = time.localtime(time.time())
-clutPath = rootPath + "/clut.txt"
 dataPath = rootPath + "/data/" + monkeyList[monkey]+ "_task"+str(task+1)+ "_{year}-{month}-{day}_{hours}-{minutes}-{seconds}.dat".format(year=currDate[0],month=currDate[1],day=currDate[2],hours=currDate[3],minutes=currDate[4],seconds=currDate[5])
-logPath = rootPath + "/data/" + monkeyList[monkey]+"_task"+str(task+1)+"_{year}-{month}-{day}_{hours}-{minutes}-{seconds}.log".format(year=currDate[0],month=currDate[1],day=currDate[2],hours=currDate[3],minutes=currDate[4],seconds=currDate[5])
-syncPath = rootPath + "/data/" + monkeyList[monkey]+"_task"+str(task+1)+"_{year}-{month}-{day}_{hours}-{minutes}-{seconds}.sync".format(year=currDate[0],month=currDate[1],day=currDate[2],hours=currDate[3],minutes=currDate[4],seconds=currDate[5])
 fidData = open(dataPath,"w")
+logPath = rootPath + "/data/" + monkeyList[monkey]+ "_task"+str(task+1)+ "_{year}-{month}-{day}_{hours}-{minutes}-{seconds}.log".format(year=currDate[0],month=currDate[1],day=currDate[2],hours=currDate[3],minutes=currDate[4],seconds=currDate[5])
 fidLog = open(logPath,"w")
-fidSync = open(syncPath,'w')
-
-dataStr = "time,whichstim,iftouch,ifreward,ifout"
-fidData.write(dataStr)
-logStr = "time,type,value"
-fidLog.write(logStr)
-syncStr = "commTime,commContent"
-fidSync.write(syncStr)
 
 # start main loop
 pygame.event.clear()
@@ -324,20 +314,33 @@ I = numpy.zeros((screenWidth,screenHeight,3))
 
 wasClicked = 0
 ifReward = 0
-displayStim = [1,2,3,4,5]
-rewardStim  = [1]
+displayStim = list(range(987,995))
+rewardStim  = [987,989,991,993]
+
+dataStr = "All stim."
+fidData.write(dataStr)
+fidData.write("\n")
+fidData.write(str(displayStim))
+fidData.write("\n")
+dataStr = "Reward stim."
+fidData.write(dataStr)
+fidData.write("\n")
+fidData.write(str(rewardStim))
 
 # wait for server command to start
 # TCP_IP communication with laptop
 
-TCP_IP = '192.168.0.102'   # Pi IP
+TCP_IP = '192.168.0.200'   # Pi IP
 TCP_PORT = 1234
 BUFFER_SIZE = 24
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.bind((TCP_IP, TCP_PORT))
 s.listen(1)
 conn, addr = s.accept()
-dataStr = "\n{time},{stim},{click:b},{reward:b},{out:b}".format(time=time.time(),stim=9999,click=0,reward=0,out=0)
+fidData.write("\n")
+dataStr = "PiReceivePC sync."
+fidData.write(dataStr)
+dataStr = "\n{time}".format(time=time.time())
 fidData.write(dataStr)
 commAddr = addr
 while 1:
@@ -346,9 +349,16 @@ while 1:
     commData = data
     conn.send(data)
     commechoTime = time.time()
-    dataStr = "\n{time},{stim},{click:b},{reward:b},{out:b}".format(time=time.time(),stim=9999,click=0,reward=0,out=0)
+    fidData.write("\n")
+    dataStr = "PiSendPC sync."
+    fidData.write(dataStr)
+    dataStr = "\n{time}".format(time=time.time())
     fidData.write(dataStr)
 conn.close()
+
+fidData.write("\n")
+dataStr = "time,whichstim,iftouch,ifreward,ifout"
+fidData.write(dataStr)
 
 startTime = time.time()
 
@@ -359,21 +369,24 @@ while True:
     # check mouse
     if sum(pygame.mouse.get_pressed()):
         if not wasClicked:
-##            logStr = "\n{time},1,{avail}".format(time=time.time()-startTime,avail=avail)
-##            fidLog.write(logStr)
             if stimNumber in rewardStim:
                 lastSwitch = time.time()
                 rewardsNum = rewardsNum+1
                 if rPi:
                     ifReward = 1
                     motorCurrStep = drop_pellet(motorCurrStep)
-		    # add sound
-		    # snd1.play(loops=0)
+                    while True:
+                        dataStr = "\n{time},{stim},{click:b},{reward:b},{out:b}".format(time=time.time(),stim=stimNumber,click=1,reward=1,out=0)
+                        fidData.write(dataStr)
+                        if (time.time()-lastSwitch)>=1:
+                            break
                 newStim = 1
             else:
                 lastTimeOut = time.time()
                 inTimeOut = 1
                 ifReward = 0
+                dataStr = "\n{time},{stim},{click:b},{reward:b},{out:b}".format(time=time.time(),stim=stimNumber,click=1,reward=0,out=0)
+                fidData.write(dataStr)
 					
         wasClicked = 1
     else:
@@ -398,7 +411,7 @@ while True:
         offsetRect = (int((screenWidth-newRect[2])/2),int((screenHeight-newRect[3])/2))
 
     # write in data files
-    dataStr = "\n{time},{stim},{click:b},{reward:b},{out:b}".format(time=time.time()-startTime,stim=stimNumber,click=wasClicked,reward=wasClicked and ifReward,out=(time.time()-lastTimeOut)<timeOut)
+    dataStr = "\n{time},{stim},{click:b},{reward:b},{out:b}".format(time=time.time(),stim=stimNumber,click=wasClicked,reward=wasClicked and ifReward,out=(time.time()-lastTimeOut)<timeOut)
     fidData.write(dataStr)
 
     # display frame
