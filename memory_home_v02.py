@@ -23,12 +23,7 @@ imagesFolder = '/home/pi/Documents/git/rPimemory/stim_20190215'
 screenWidth = 800
 screenHeight = 480
 refreshRate = 60
-<<<<<<< HEAD
 rewardsMax = 150
-=======
-timeMax = 1
-rewardsMax = 100
->>>>>>> 5c514f225e728198f008f767f0abe15408f8436e
 timeMax = 1.5
 timeOut = 2
 stimScale = 1
@@ -74,13 +69,8 @@ def syncTCP():
     s.send((MESSAGE).encode())
 
 def quitprogram(circ):
-<<<<<<< HEAD
-    logStr = "\n{time},3,circ".format(time=time.time())
-=======
-    logStr = "\n{time},3,{c}".format(time=time.time()-startTime,c=circ)
->>>>>>> 5c514f225e728198f008f767f0abe15408f8436e
+    logStr = "\n{time},3,{c}".format(time=time.time(),c=circ)
     fidLog.write(logStr)
-
     fidLog.close()
     fidData.close()
     if (monkey==7):
