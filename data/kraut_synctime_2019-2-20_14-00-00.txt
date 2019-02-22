@@ -1,2 +1,6 @@
-connTime, pcrecpiTime, pistopTime
-1550687825.2864492,1550687825.3176491,0
+connTime
+1550687825.2864492
+pcrecpiTime
+1550687825.3176491
+pistopTime
+0
