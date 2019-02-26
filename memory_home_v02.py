@@ -161,6 +161,7 @@ if rPi:
         io.output(pinEnable, False)
         if not pelletDropped:
             if (monkey!=7):
+                syncTCP()
                 quitprogram(4)
         return startingStep
 
