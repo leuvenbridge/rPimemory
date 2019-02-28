@@ -39,7 +39,7 @@ sndSampFreq = 22050
 motorStepsMax = 100 # 50 steps for 1 drop
 motorStepsWait = 0.01
 motorStepsUnstick = 25
-motorAttempts = 5
+motorAttempts = 8
 motorCurrStep = -1
 pelletDropped = 0
 
