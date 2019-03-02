@@ -36,7 +36,7 @@ sndFadeDur = 0.01
 sndSampFreq = 22050
 
 # motor params
-motorStepsMax = 150 # 50 steps for 1 drop
+motorStepsMax = 100 # 50 steps for 1 drop
 motorStepsWait = 0.01
 motorStepsUnstick = 25
 motorAttempts = 8
@@ -331,7 +331,7 @@ fidData.write(str(rewardStim))
 # wait for server command to start
 # TCP_IP communication with laptop
 
-TCP_IP = '192.168.0.200'   # Pi IP
+TCP_IP = '192.168.0.214'   # Pi IP
 TCP_PORT = 1234
 BUFFER_SIZE = 24
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
