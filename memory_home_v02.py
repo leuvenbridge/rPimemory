@@ -334,28 +334,28 @@ fidData.write(str(rewardStim))
 TCP_IP = '192.168.0.200'   # Pi IP
 TCP_PORT = 1234
 BUFFER_SIZE = 24
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.bind((TCP_IP, TCP_PORT))
-s.listen(1)
-conn, addr = s.accept()
-fidData.write("\n")
-dataStr = "PiReceivePC sync."
-fidData.write(dataStr)
-dataStr = "\n{time}".format(time=time.time())
-fidData.write(dataStr)
-commAddr = addr
-while 1:
-    data = conn.recv(BUFFER_SIZE)
-    if not data: break
-    commData = data
-    conn.send(data)
-    commechoTime = time.time()
-    fidData.write("\n")
-    dataStr = "PiSendPC sync."
-    fidData.write(dataStr)
-    dataStr = "\n{time}".format(time=time.time())
-    fidData.write(dataStr)
-conn.close()
+##s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+##s.bind((TCP_IP, TCP_PORT))
+##s.listen(1)
+##conn, addr = s.accept()
+##fidData.write("\n")
+##dataStr = "PiReceivePC sync."
+##fidData.write(dataStr)
+##dataStr = "\n{time}".format(time=time.time())
+##fidData.write(dataStr)
+##commAddr = addr
+##while 1:
+##    data = conn.recv(BUFFER_SIZE)
+##    if not data: break
+##    commData = data
+##    conn.send(data)
+##    commechoTime = time.time()
+##    fidData.write("\n")
+##    dataStr = "PiSendPC sync."
+##    fidData.write(dataStr)
+##    dataStr = "\n{time}".format(time=time.time())
+##    fidData.write(dataStr)
+##conn.close()
 
 fidData.write("\n")
 dataStr = "time,whichstim,iftouch,ifreward,ifout"
