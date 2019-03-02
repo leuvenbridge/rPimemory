@@ -36,7 +36,7 @@ sndFadeDur = 0.01
 sndSampFreq = 22050
 
 # motor params
-motorStepsMax = 100 # 50 steps for 1 drop
+motorStepsMax = 150 # 50 steps for 1 drop
 motorStepsWait = 0.01
 motorStepsUnstick = 25
 motorAttempts = 8
