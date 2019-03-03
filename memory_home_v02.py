@@ -315,8 +315,8 @@ I = numpy.zeros((screenWidth,screenHeight,3))
 
 wasClicked = 0
 ifReward = 0
-displayStim = list(range(965,973))
-rewardStim  = [965,967,969,971]
+displayStim = list(range(957,965))
+rewardStim  = [957,959,961,963]
 
 dataStr = "All stim."
 fidData.write(dataStr)
