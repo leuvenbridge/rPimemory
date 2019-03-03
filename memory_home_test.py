@@ -25,7 +25,7 @@ screenHeight = 480
 refreshRate = 60
 rewardsMax = 200
 timeMax = 2
-timeOut = 4
+timeOut = 3
 timeRewardOn = 1
 stimScale = 1
 
@@ -305,6 +305,7 @@ fidLog = open(logPath,"w")
 # start main loop
 pygame.event.clear()
 
+newStim = 0
 inTimeOut = 0
 rewardsNum = 0
 lastTimeOut = -timeOut
@@ -366,115 +367,28 @@ fidData.write(dataStr)
 startTime = time.time()
 
 # display GO! image
-newStim = 1
-stimNumber = 0
-
 while True:
-
-    pygame.event.pump()
-
-    # check mouse
-    if sum(pygame.mouse.get_pressed()):
-        if not wasTouch:
-            if stimNumber==0:
-                newStim = 1
-                stimNumber = random.choice(displayStim)
-                lastSwitch = time.time()
-                wasTouchInit = 1
-                inTimeOut = 0
-                dataStr = "\n{time},{stim},{click:b},{reward:b},{out:b}".format(time=time.time(),stim=0,click=1,reward=0,out=0)
-                fidData.write(dataStr)
-            elif stimNumber in rewardStim:
-                lastSwitch = time.time()
-                rewardsNum = rewardsNum+1
-                if rPi:
-                    ifReward = 1
-                    motorCurrStep = drop_pellet(motorCurrStep)
-                    while True:
-                        dataStr = "\n{time},{stim},{click:b},{reward:b},{out:b}".format(time=time.time(),stim=stimNumber,click=1,reward=1,out=0)
-                        fidData.write(dataStr)
-                        if (time.time()-lastSwitch)>=timeRewardOn:
-                            break
-                lastSwitch = time.time()
-                newStim = 1
-                stimNumber = 0
-                wasTouchInit = 0
-                inTimeOut = 0
-            else:
-                lastTimeOut = time.time()
-                inTimeOut = 1
-                ifReward = 0
-                dataStr = "\n{time},{stim},{click:b},{reward:b},{out:b}".format(time=time.time(),stim=stimNumber,click=1,reward=0,out=0)
-                fidData.write(dataStr)
-                wasTouchInit = 0
-        wasTouch = 1
-    else:
-        wasTouch = 0
-        
-    if newStim:
-        newStim = 0
-        stimName = '{stimFolder:s}/{stimNumber:d}_r0.png'.format(stimFolder=imagesFolder,stimNumber=stimNumber)
-        I = pygame.image.load(stimName)
-        oldRect = I.get_rect()
-        newRect = tuple(rr*stimScale for rr in oldRect)
-        I = pygame.transform.scale(I,newRect[2:4])
-        offsetRect = (int((screenWidth-newRect[2])/2),int((screenHeight-newRect[3])/2))
-
-    # display frame
-    if not inTimeOut:
-        win.fill((0,0,0))
-        win.blit(I,offsetRect)
-    else:
-        win.fill((0,0,0))
+    stimNumber = 0
+    stimName = '{stimFolder:s}/{stimNumber:d}_r0.png'.format(stimFolder=imagesFolder,stimNumber=stimNumber)
+    I = pygame.image.load(stimName)
+    oldRect = I.get_rect()
+    newRect = tuple(rr*stimScale for rr in oldRect)
+    I = pygame.transform.scale(I,newRect[2:4])
+    offsetRect = (int((screenWidth-newRect[2])/2),int((screenHeight-newRect[3])/2))
+    win.fill((0,0,0))
+    win.blit(I,offsetRect)
     pygame.display.flip()
     clock.tick(refreshRate)
-	
-    # reward if no touch within timeMax for distractor images
-    # screen off for timeOut if not touch for reward images
-    if wasTouchInit and (time.time()-lastSwitch)>timeMax:
-        wasTouchInit = 0
-        if stimNumber in unrewardStim:
-            lastSwitch = time.time()
-            rewardsNum = rewardsNum+1
-            if rPi:
-                ifReward = 1
-                motorCurrStep = drop_pellet(motorCurrStep)
-                while True:
-                    dataStr = "\n{time},{stim},{click:b},{reward:b},{out:b}".format(time=time.time(),stim=stimNumber,click=0,reward=1,out=0)
-                    fidData.write(dataStr)
-                    if (time.time()-lastSwitch)>=timeRewardOn:
-                        break
-            lastSwitch = time.time()
-            newStim = 1
-            wasTouch = 0
-            stimNumber = 0
-            inTimeOut = 0
-        else:
-            lastTimeOut = time.time()
-            inTimeOut = 1
-            ifReward = 0
-            dataStr = "\n{time},{stim},{click:b},{reward:b},{out:b}".format(time=time.time(),stim=stimNumber,click=0,reward=0,out=0)
-            fidData.write(dataStr)
-	
-    # check if maxTime reached
-    if inTimeOut and (time.time()-lastTimeOut)>timeOut:
-        inTimeOut = 0
-        newStim = 1
-        stimNumber = 0
-        
-    # write in data files
-    dataStr = "\n{time},{stim},{click:b},{reward:b},{out:b}".format(time=time.time(),stim=stimNumber,click=wasTouch or wasTouchInit,reward=0,out=(time.time()-lastTimeOut)<timeOut)
-    fidData.write(dataStr)
 
-    # quit if key press, button press or reward max
-    keys = pygame.key.get_pressed()
-    if keys[K_q]:
-        syncTCP()
-        quitprogram(3)
-    if rPi and io.input(pinButton):
-        syncTCP()
-        quitprogram(2)
-    if (rewardsNum==rewardsMax):
-        syncTCP()
-        quitprogram(1)
+
+ 
+ 
+ 
+ 
+                
+
+
+
+
+	
 
