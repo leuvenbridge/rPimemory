@@ -23,7 +23,7 @@ imagesFolder = '/home/pi/Documents/git/rPimemory/stim_20190215'
 screenWidth = 800
 screenHeight = 480
 refreshRate = 60
-rewardsMax = 200
+rewardsMax = 300
 timeMax = 2
 timeOut = 4
 timeRewardOn = 1
@@ -406,6 +406,8 @@ while True:
                 ifReward = 0
                 dataStr = "\n{time},{stim},{click:b},{reward:b},{out:b}".format(time=time.time(),stim=stimNumber,click=1,reward=0,out=0)
                 fidData.write(dataStr)
+                newStim = 0
+                stimNumber = -1
                 wasTouchInit = 0
         wasTouch = 1
     else:
@@ -428,7 +430,7 @@ while True:
         win.fill((0,0,0))
     pygame.display.flip()
     clock.tick(refreshRate)
-	
+
     # reward if no touch within timeMax for distractor images
     # screen off for timeOut if not touch for reward images
     if wasTouchInit and (time.time()-lastSwitch)>timeMax:
@@ -455,7 +457,9 @@ while True:
             ifReward = 0
             dataStr = "\n{time},{stim},{click:b},{reward:b},{out:b}".format(time=time.time(),stim=stimNumber,click=0,reward=0,out=0)
             fidData.write(dataStr)
-	
+            newStim = 0
+            stimNumber = -1
+
     # check if maxTime reached
     if inTimeOut and (time.time()-lastTimeOut)>timeOut:
         inTimeOut = 0
