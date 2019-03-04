@@ -56,19 +56,18 @@ pingInterval = 10
 
 # define functions
 def syncTCP():
-    a=1
-##    TCP_IP = '192.168.0.107'   # laptop IP
-##    TCP_PORT = 1234
-##    BUFFER_SIZE = 1024
-##    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-##    s.connect((TCP_IP, TCP_PORT))
-##    fidData.write("\n")
-##    dataStr = "PiStop sync."
-##    fidData.write(dataStr)
-##    dataStr = "\n{time}".format(time=time.time())
-##    fidData.write(dataStr)
-##    MESSAGE = "Pi Stopped!"
-##    s.send((MESSAGE).encode())
+    TCP_IP = '192.168.0.107'   # laptop IP
+    TCP_PORT = 1234
+    BUFFER_SIZE = 1024
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.connect((TCP_IP, TCP_PORT))
+    fidData.write("\n")
+    dataStr = "PiStop sync."
+    fidData.write(dataStr)
+    dataStr = "\n{time}".format(time=time.time())
+    fidData.write(dataStr)
+    MESSAGE = "Pi Stopped!"
+    s.send((MESSAGE).encode())
 
 def quitprogram(circ):
     logStr = "\n{time},3,{c}".format(time=time.time(),c=circ)
@@ -197,8 +196,8 @@ else:
 
 # start pygame
 pygame.init()
-#win = pygame.display.set_mode((screenWidth,screenHeight), pygame.FULLSCREEN, 32)
-win = pygame.display.set_mode((screenWidth,screenHeight), 32)
+win = pygame.display.set_mode((screenWidth,screenHeight), pygame.FULLSCREEN, 32)
+#win = pygame.display.set_mode((screenWidth,screenHeight), 32)
 clock = pygame.time.Clock()
 pygame.font.init()
 myfont = pygame.font.SysFont('Helvetica', 30)
@@ -332,32 +331,31 @@ fidData.write(str(rewardStim))
 
 # wait for server command to start
 # TCP_IP communication with laptop
-
-##TCP_IP = '192.168.0.200'   # Pi IP
-##TCP_PORT = 1234
-##BUFFER_SIZE = 24
-##s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-##s.bind((TCP_IP, TCP_PORT))
-##s.listen(1)
-##conn, addr = s.accept()
-##fidData.write("\n")
-##dataStr = "PiReceivePC sync."
-##fidData.write(dataStr)
-##dataStr = "\n{time}".format(time=time.time())
-##fidData.write(dataStr)
-##commAddr = addr
-##while True:
-##    data = conn.recv(BUFFER_SIZE)
-##    if not data: break
-##    commData = data
-##    conn.send(data)
-##    commechoTime = time.time()
-##    fidData.write("\n")
-##    dataStr = "PiSendPC sync."
-##    fidData.write(dataStr)
-##    dataStr = "\n{time}".format(time=time.time())
-##    fidData.write(dataStr)
-##conn.close()
+TCP_IP = '192.168.0.200'   # Pi IP
+TCP_PORT = 1234
+BUFFER_SIZE = 24
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.bind((TCP_IP, TCP_PORT))
+s.listen(1)
+conn, addr = s.accept()
+fidData.write("\n")
+dataStr = "PiReceivePC sync."
+fidData.write(dataStr)
+dataStr = "\n{time}".format(time=time.time())
+fidData.write(dataStr)
+commAddr = addr
+while True:
+    data = conn.recv(BUFFER_SIZE)
+    if not data: break
+    commData = data
+    conn.send(data)
+    commechoTime = time.time()
+    fidData.write("\n")
+    dataStr = "PiSendPC sync."
+    fidData.write(dataStr)
+    dataStr = "\n{time}".format(time=time.time())
+    fidData.write(dataStr)
+conn.close()
 
 fidData.write("\n")
 dataStr = "time,whichstim,iftouch,ifreward,ifout"
