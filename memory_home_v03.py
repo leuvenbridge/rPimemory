@@ -25,7 +25,7 @@ screenHeight = 480
 refreshRate = 60
 rewardsMax = 400
 timeMax = 4
-timeOut = 5
+timeOut = 6
 timeRewardOn = 1
 stimScale = 1
 
@@ -101,9 +101,9 @@ if rPi:
     # rotate motor
     def motor_rotate(step):
         ## half steps - higher accuracy
-        stepSequence = numpy.array([[1,0,0,1],[1,0,0,0],[1,1,0,0],[0,1,0,0],[0,1,1,0],[0,0,1,0],[0,0,1,1],[0,0,0,1]])
+        ##stepSequence = numpy.array([[1,0,0,1],[1,0,0,0],[1,1,0,0],[0,1,0,0],[0,1,1,0],[0,0,1,0],[0,0,1,1],[0,0,0,1]])
         ## full steps - maximum torque
-        ## stepSequence = numpy.array([[1,0,0,1],[1,1,0,0],[0,1,1,0],[0,0,1,1]])
+        stepSequence = numpy.array([[1,0,0,1],[1,1,0,0],[0,1,1,0],[0,0,1,1]])
         for coil in range(4):
             io.output(pinMotor[coil], int(stepSequence[step,coil]))
 
