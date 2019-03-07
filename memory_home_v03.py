@@ -23,7 +23,7 @@ imagesFolder = '/home/pi/Documents/git/rPimemory/stim_20190215'
 screenWidth = 800
 screenHeight = 480
 refreshRate = 60
-rewardsMax = 300
+rewardsMax = 400
 timeMax = 4
 timeOut = 5
 timeRewardOn = 1
@@ -196,8 +196,8 @@ else:
 
 # start pygame
 pygame.init()
-win = pygame.display.set_mode((screenWidth,screenHeight), pygame.FULLSCREEN, 32)
-#win = pygame.display.set_mode((screenWidth,screenHeight), 32)
+#win = pygame.display.set_mode((screenWidth,screenHeight), pygame.FULLSCREEN, 32)
+win = pygame.display.set_mode((screenWidth,screenHeight), 32)
 clock = pygame.time.Clock()
 pygame.font.init()
 myfont = pygame.font.SysFont('Helvetica', 30)
@@ -331,7 +331,7 @@ fidData.write(str(rewardStim))
 
 # wait for server command to start
 # TCP_IP communication with laptop
-TCP_IP = '192.168.0.200'   # Pi IP
+TCP_IP = '192.168.0.214'   # Pi IP
 TCP_PORT = 1234
 BUFFER_SIZE = 24
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -381,7 +381,7 @@ while True:
                 inTimeOut = 0
                 dataStr = "\n{time},{stim},{click:b},{reward:b},{out:b}".format(time=time.time(),stim=0,click=1,reward=0,out=0)
                 fidData.write(dataStr)
-				lastSwitch = time.time()
+                lastSwitch = time.time()
             elif stimNumber in rewardStim:
                 lastSwitch = time.time()
                 rewardsNum = rewardsNum+1
@@ -413,7 +413,7 @@ while True:
     # screen off for timeOut if not touch for reward images
     if wasTouchInit and (time.time()-lastSwitch)>timeMax:
         wasTouchInit = 0
-		wasTouch = 0
+        wasTouch = 0
         if stimNumber in unrewardStim:
             lastSwitch = time.time()
             rewardsNum = rewardsNum+1
@@ -446,7 +446,7 @@ while True:
     dataStr = "\n{time},{stim},{click:b},{reward:b},{out:b}".format(time=time.time(),stim=stimNumber,click=0,reward=0,out=(time.time()-lastTimeOut)<timeOut)
     fidData.write(dataStr)
 
-	if newStim:
+    if newStim:
         newStim = 0
         stimName = '{stimFolder:s}/{stimNumber:d}_r0.png'.format(stimFolder=imagesFolder,stimNumber=stimNumber)
         I = pygame.image.load(stimName)
