@@ -56,18 +56,18 @@ pingInterval = 10
 
 # define functions
 def syncTCP():
-    TCP_IP = '192.168.0.107'   # laptop IP
-    TCP_PORT = 1234
-    BUFFER_SIZE = 1024
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect((TCP_IP, TCP_PORT))
+##    TCP_IP = '192.168.0.107'   # laptop IP
+##    TCP_PORT = 1234
+##    BUFFER_SIZE = 1024
+##    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+##    s.connect((TCP_IP, TCP_PORT))
     fidData.write("\n")
     dataStr = "PiStop sync."
     fidData.write(dataStr)
     dataStr = "\n{time}".format(time=time.time())
     fidData.write(dataStr)
-    MESSAGE = "Pi Stopped!"
-    s.send((MESSAGE).encode())
+##    MESSAGE = "Pi Stopped!"
+##    s.send((MESSAGE).encode())
 
 def quitprogram(circ):
     logStr = "\n{time},3,{c}".format(time=time.time(),c=circ)
@@ -331,33 +331,44 @@ fidData.write(str(rewardStim))
 
 # wait for server command to start
 # TCP_IP communication with laptop
-TCP_IP = '192.168.0.214'   # Pi IP
-TCP_PORT = 1234
-BUFFER_SIZE = 24
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.bind((TCP_IP, TCP_PORT))
-s.listen(1)
-conn, addr = s.accept()
+##TCP_IP = '192.168.0.200'   # Pi IP
+##TCP_PORT = 1234
+##BUFFER_SIZE = 24
+##s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+##s.bind((TCP_IP, TCP_PORT))
+##s.listen(1)
+##conn, addr = s.accept()
+##fidData.write("\n")
+##dataStr = "PiReceivePC sync."
+##fidData.write(dataStr)
+##dataStr = "\n{time}".format(time=time.time())
+##fidData.write(dataStr)
+##commAddr = addr
+##while True:
+##    data = conn.recv(BUFFER_SIZE)
+##    if not data: break
+##    commData = data
+##    conn.send(data)
+##    commechoTime = time.time()
+##    fidData.write("\n")
+##    dataStr = "PiSendPC sync."
+##    fidData.write(dataStr)
+##    dataStr = "\n{time}".format(time=time.time())
+##    fidData.write(dataStr)
+##conn.close()
+
 fidData.write("\n")
 dataStr = "PiReceivePC sync."
 fidData.write(dataStr)
 dataStr = "\n{time}".format(time=time.time())
 fidData.write(dataStr)
-commAddr = addr
-while True:
-    data = conn.recv(BUFFER_SIZE)
-    if not data: break
-    commData = data
-    conn.send(data)
-    commechoTime = time.time()
-    fidData.write("\n")
-    dataStr = "PiSendPC sync."
-    fidData.write(dataStr)
-    dataStr = "\n{time}".format(time=time.time())
-    fidData.write(dataStr)
-conn.close()
-
 fidData.write("\n")
+dataStr = "PiSendPC sync."
+fidData.write(dataStr)
+dataStr = "\n{time}".format(time=time.time())
+fidData.write(dataStr)
+fidData.write("\n")
+
 dataStr = "time,whichstim,iftouch,ifreward,ifout"
 fidData.write(dataStr)
 
@@ -381,7 +392,7 @@ while True:
                 inTimeOut = 0
                 dataStr = "\n{time},{stim},{click:b},{reward:b},{out:b}".format(time=time.time(),stim=0,click=1,reward=0,out=0)
                 fidData.write(dataStr)
-				lastSwitch = time.time()
+                lastSwitch = time.time()
             elif stimNumber in rewardStim:
                 lastSwitch = time.time()
                 rewardsNum = rewardsNum+1
@@ -413,7 +424,7 @@ while True:
     # screen off for timeOut if not touch for reward images
     if wasTouchInit and (time.time()-lastSwitch)>timeMax:
         wasTouchInit = 0
-		wasTouch = 0
+        wasTouch = 0
         if stimNumber in unrewardStim:
             lastSwitch = time.time()
             rewardsNum = rewardsNum+1
@@ -446,7 +457,7 @@ while True:
     dataStr = "\n{time},{stim},{click:b},{reward:b},{out:b}".format(time=time.time(),stim=stimNumber,click=0,reward=0,out=(time.time()-lastTimeOut)<timeOut)
     fidData.write(dataStr)
 
-	if newStim:
+    if newStim:
         newStim = 0
         stimName = '{stimFolder:s}/{stimNumber:d}_r0.png'.format(stimFolder=imagesFolder,stimNumber=stimNumber)
         I = pygame.image.load(stimName)
