@@ -23,8 +23,8 @@ imagesFolder = '/home/pi/Documents/git/rPimemory/stim_20190215'
 screenWidth = 800
 screenHeight = 480
 refreshRate = 60
-rewardsMax = 400
-timeMax = 4
+rewardsMax = 300
+timeMax = 3
 timeOut = 6
 timeRewardOn = 1
 stimScale = 1
@@ -382,7 +382,7 @@ while True:
                 dataStr = "\n{time},{stim},{click:b},{reward:b},{out:b}".format(time=time.time(),stim=0,click=1,reward=0,out=0)
                 fidData.write(dataStr)
 				lastSwitch = time.time()
-            elif stimNumber in rewardStim:
+            elif stimNumber in rewardStim and not inTimeOut:
                 lastSwitch = time.time()
                 rewardsNum = rewardsNum+1
                 if rPi:
