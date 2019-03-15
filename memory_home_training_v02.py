@@ -24,7 +24,7 @@ screenWidth = 800
 screenHeight = 480
 refreshRate = 60
 rewardsMax = 300
-timeMax = 4
+timeMax = 3
 timeOut = 6
 timeRewardOn = 1
 stimScale = 1
@@ -37,10 +37,10 @@ sndFadeDur = 0.01
 sndSampFreq = 22050
 
 # motor params
-motorStepsMax = 100 # 50 steps for 1 drop
+motorStepsMax = 50 # 50 steps for 1 drop
 motorStepsWait = 0.01
 motorStepsUnstick = 25
-motorAttempts = 8
+motorAttempts = 15
 motorCurrStep = -1
 pelletDropped = 0
 
@@ -101,7 +101,7 @@ if rPi:
     # rotate motor
     def motor_rotate(step):
         ## half steps - higher accuracy
-        ##stepSequence = numpy.array([[1,0,0,1],[1,0,0,0],[1,1,0,0],[0,1,0,0],[0,1,1,0],[0,0,1,0],[0,0,1,1],[0,0,0,1]])
+        #stepSequence = numpy.array([[1,0,0,1],[1,0,0,0],[1,1,0,0],[0,1,0,0],[0,1,1,0],[0,0,1,0],[0,0,1,1],[0,0,0,1]])
         ## full steps - maximum torque
         stepSequence = numpy.array([[1,0,0,1],[1,1,0,0],[0,1,1,0],[0,0,1,1]])
         for coil in range(4):
@@ -393,7 +393,7 @@ while True:
                 dataStr = "\n{time},{stim},{click:b},{reward:b},{out:b}".format(time=time.time(),stim=0,click=1,reward=0,out=0)
                 fidData.write(dataStr)
                 lastSwitch = time.time()
-            elif stimNumber in rewardStim:
+            elif stimNumber in rewardStim and not inTimeOut:
                 lastSwitch = time.time()
                 rewardsNum = rewardsNum+1
                 if rPi:
