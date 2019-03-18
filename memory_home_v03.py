@@ -331,7 +331,7 @@ fidData.write(str(rewardStim))
 
 # wait for server command to start
 # TCP_IP communication with laptop
-TCP_IP = '192.168.0.200'   # Pi IP
+TCP_IP = '192.168.0.214'   # Pi IP
 TCP_PORT = 1234
 BUFFER_SIZE = 24
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
