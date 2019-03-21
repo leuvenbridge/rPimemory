@@ -1,6 +1,0 @@
-Connection time
-45667.4901884
-Received time
-45667.5251904
-pistopTime
-48268.541972
