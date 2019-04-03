@@ -1,6 +1,0 @@
-connTime
-57541.510328
-pcrecpiTime
-57541.525928
-pistopTime
-61866.390619
