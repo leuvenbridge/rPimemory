@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Name=foraging
+Exec=python3 /home/pi/Documents/git/rPimemory/memory_home_trainingonly.py
+Terminal=false
+Icon=/home/pi/Documents/git/rPimemory/monkey.png
+Type=Application
+Name[en_GB]=foragingmemory
+Name[en_US]=foragingmemory
