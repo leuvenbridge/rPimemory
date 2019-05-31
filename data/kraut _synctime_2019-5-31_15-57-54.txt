@@ -1,0 +1,3 @@
+Connection time 1559336274.580068
+Received data: b'START!'
+Received time: 1559336274.6236696
