@@ -1,3 +1,6 @@
-Connection time 1559941620.7411423
-Received data: b'START!'
-Received time: 1559941620.7567422
+connTime
+58020.7411423
+pcrecpiTime
+58020.7567422
+pistopTime
+99999.999999
