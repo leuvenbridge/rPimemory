@@ -24,8 +24,9 @@ screenWidth = 800
 screenHeight = 480
 refreshRate = 60
 rewardsMax = 300
-timeMax = 3
-timeOut = 6
+timeMax = 2
+timeOut = 10
+timeDelay = 0.1
 timeRewardOn = 1
 stimScale = 1
 
@@ -40,7 +41,7 @@ sndSampFreq = 22050
 motorStepsMax = 100 # 50 steps for 1 drop
 motorStepsWait = 0.01
 motorStepsUnstick = 25
-motorAttempts = 8
+motorAttempts = 50
 motorCurrStep = -1
 pelletDropped = 0
 
@@ -56,7 +57,7 @@ pingInterval = 10
 
 # define functions
 def syncTCP():
-    TCP_IP = '192.168.0.107'   # laptop IP
+    TCP_IP = '192.168.0.71'   # laptop IP
     TCP_PORT = 1234
     BUFFER_SIZE = 1024
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -315,8 +316,8 @@ I = numpy.zeros((screenWidth,screenHeight,3))
 wasTouch = 0
 wasTouchInit = 0
 ifReward = 0
-displayStim = list(range(957,965))
-rewardStim  = [957,959,961,963]
+displayStim = [842,843,844,845]+list(range(382,390))
+rewardStim  = [842,844]+list(range(382,390,2))
 unrewardStim = list(set(displayStim)-set(rewardStim))
 
 dataStr = "All stim."
@@ -381,7 +382,15 @@ while True:
                 inTimeOut = 0
                 dataStr = "\n{time},{stim},{click:b},{reward:b},{out:b}".format(time=time.time(),stim=0,click=1,reward=0,out=0)
                 fidData.write(dataStr)
-				lastSwitch = time.time()
+                dataStr = "\n{time},{stim},{click:b},{reward:b},{out:b}".format(time=time.time(),stim=0,click=0,reward=0,out=0)
+                fidData.write(dataStr)
+                lastSwitch = time.time()
+                while True:      
+                    if (time.time()-lastSwitch)>=timeDelay:
+                        break
+                dataStr = "\n{time},{stim},{click:b},{reward:b},{out:b}".format(time=time.time(),stim=0,click=0,reward=0,out=0)
+                fidData.write(dataStr)
+                lastSwitch = time.time()
             elif stimNumber in rewardStim and not inTimeOut:
                 lastSwitch = time.time()
                 rewardsNum = rewardsNum+1
@@ -413,18 +422,18 @@ while True:
     # screen off for timeOut if not touch for reward images
     if wasTouchInit and (time.time()-lastSwitch)>timeMax:
         wasTouchInit = 0
-		wasTouch = 0
+        wasTouch = 0
         if stimNumber in unrewardStim:
-            lastSwitch = time.time()
-            rewardsNum = rewardsNum+1
-            if rPi:
-                ifReward = 1
-                motorCurrStep = drop_pellet(motorCurrStep)
-                while True:
-                    dataStr = "\n{time},{stim},{click:b},{reward:b},{out:b}".format(time=time.time(),stim=stimNumber,click=0,reward=1,out=0)
-                    fidData.write(dataStr)
-                    if (time.time()-lastSwitch)>=timeRewardOn:
-                        break
+##            lastSwitch = time.time()
+##            rewardsNum = rewardsNum+1
+##            if rPi:
+##                ifReward = 1
+##                motorCurrStep = drop_pellet(motorCurrStep)
+##                while True:
+##                    dataStr = "\n{time},{stim},{click:b},{reward:b},{out:b}".format(time=time.time(),stim=stimNumber,click=0,reward=1,out=0)
+##                    fidData.write(dataStr)
+##                    if (time.time()-lastSwitch)>=timeRewardOn:
+##                        break
             newStim = 1
             stimNumber = 0
             inTimeOut = 0
@@ -446,7 +455,7 @@ while True:
     dataStr = "\n{time},{stim},{click:b},{reward:b},{out:b}".format(time=time.time(),stim=stimNumber,click=0,reward=0,out=(time.time()-lastTimeOut)<timeOut)
     fidData.write(dataStr)
 
-	if newStim:
+    if newStim:
         newStim = 0
         stimName = '{stimFolder:s}/{stimNumber:d}_r0.png'.format(stimFolder=imagesFolder,stimNumber=stimNumber)
         I = pygame.image.load(stimName)
